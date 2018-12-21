@@ -1,0 +1,16 @@
+# Exclude these files from the git repo
+wp-config.php
+wp-content/backup/*
+wp-content/cache/*
+wp-content/upgrade/*
+# Hidden system files
+*.DS_Store
+*[Tt]humbs.db
+*.Trashes
+*.sh
+
+# Include these files in previously blocked directories
+!wp-content/uploads/.htaccess
+
+# phpstorm
+.idea
