@@ -16,3 +16,5 @@ wp-content/upgrade/*
 
 # phpstorm
 .idea
+
+wp-content/plugins/fix-windows-compatibility/~log.txt
