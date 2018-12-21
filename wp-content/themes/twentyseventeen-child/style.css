@@ -1,0 +1,13 @@
+/*
+Theme Name: Twenty Seventeen Child Theme
+Description: A child theme of Twenty Seventeen Theme.
+Author: Gregg Christofferson
+Author URI: http://www.bizdevstudio.com
+Template: twentyseventeen
+Version: 0.1.0
+*/
+@import url("../twentyseventeen/style.css");
+
+.navigation-top.site-navigation-fixed {
+    z-index: 10;
+}

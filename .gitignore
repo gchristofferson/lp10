@@ -9,6 +9,8 @@ wp-content/upgrade/*
 *.Trashes
 *.sh
 
+.htaccess
+
 # Include these files in previously blocked directories
 !wp-content/uploads/.htaccess
 
