@@ -1,4 +1,4 @@
-/*! elementor-pro - v2.2.5 - 11-12-2018 */
+/*! elementor-pro - v2.3.1 - 19-12-2018 */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -177,8 +177,15 @@ module.exports = elementor.modules.Module.extend({
 	},
 
 	addControlSpinner: function addControlSpinner(name) {
-		this.getView(name).$el.find(':input').attr('disabled', true);
-		this.getView(name).$el.find('.elementor-control-title').after('<span class="elementor-control-spinner"><i class="fa fa-spinner fa-spin"></i>&nbsp;</span>');
+		var $el = this.getView(name).$el,
+		    $input = $el.find(':input');
+
+		if ($el.find(':input').attr('disabled')) {
+			return;
+		}
+
+		$input.attr('disabled', true);
+		$el.find('.elementor-control-title').after('<span class="elementor-control-spinner"><i class="fa fa-spinner fa-spin"></i>&nbsp;</span>');
 	},
 
 	removeControlSpinner: function removeControlSpinner(name) {

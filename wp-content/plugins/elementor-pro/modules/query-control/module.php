@@ -180,7 +180,7 @@ class Module extends Module_Base {
 				}
 				break;
 			default:
-				$results = apply_filters( 'elementor_pro/query_control/get_autocomplete/' . $data['filter_type'], [] );
+				$results = apply_filters( 'elementor_pro/query_control/get_autocomplete/' . $data['filter_type'], [], $data );
 		} // End switch().
 
 		return [

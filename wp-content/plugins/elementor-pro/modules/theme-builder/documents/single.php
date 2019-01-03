@@ -69,6 +69,21 @@ class Single extends Theme_Page_Document {
 		return parent::get_remote_library_type();
 	}
 
+	public function before_get_content() {
+		parent::before_get_content();
+
+		// For `loop_start` hook.
+		if ( have_posts() ) {
+			the_post();
+		}
+	}
+
+	public function after_get_content() {
+		wp_reset_postdata();
+
+		parent::after_get_content();
+	}
+
 	public function get_container_classes() {
 		$classes = parent::get_container_classes();
 

@@ -21,7 +21,7 @@ class Module extends Module_Base {
 	protected $docs_types = [];
 
 	public static function is_active() {
-		return function_exists( 'wc' );
+		return class_exists( 'woocommerce' );
 	}
 
 	public static function is_product_search() {

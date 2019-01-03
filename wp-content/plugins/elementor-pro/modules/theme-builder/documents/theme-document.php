@@ -44,13 +44,22 @@ abstract class Theme_Document extends Library_Document {
 		return $label;
 	}
 
-	public function get_content( $with_css = false ) {
+	public function before_get_content() {
 		$preview_manager = Module::instance()->get_preview_manager();
 		$preview_manager->switch_to_preview_query();
+	}
+
+	public function after_get_content() {
+		$preview_manager = Module::instance()->get_preview_manager();
+		$preview_manager->restore_current_query();
+	}
+
+	public function get_content( $with_css = false ) {
+		$this->before_get_content();
 
 		$content = parent::get_content( $with_css );
 
-		$preview_manager->restore_current_query();
+		$this->after_get_content();
 
 		return $content;
 	}

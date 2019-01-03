@@ -47,13 +47,13 @@ class Module extends Module_Base {
 		return $settings;
 	}
 
-	public function get_autocomplete_for_library_widget_templates() {
+	public function get_autocomplete_for_library_widget_templates( $results, $data ) {
 		$document_types = Plugin::elementor()->documents->get_document_types( [
 			'show_in_library' => true,
 		] );
 
 		$query_params = [
-			's' => $_POST['q'],
+			's' => $data['q'],
 			'post_type' => Source_Local::CPT,
 			'posts_per_page' => -1,
 			'orderby' => 'meta_value',
@@ -112,7 +112,7 @@ class Module extends Module_Base {
 	public function add_filters() {
 		add_filter( 'elementor_pro/editor/localize_settings', [ $this, 'localize_settings' ] );
 		add_filter( 'elementor_pro/admin/localize_settings', [ $this, 'localize_settings' ] ); // For WordPress Widgets and Customizer
-		add_filter( 'elementor_pro/query_control/get_autocomplete/library_widget_templates', [ $this, 'get_autocomplete_for_library_widget_templates' ] );
+		add_filter( 'elementor_pro/query_control/get_autocomplete/library_widget_templates', [ $this, 'get_autocomplete_for_library_widget_templates' ], 10, 2 );
 		add_filter( 'elementor_pro/query_control/get_value_titles/library_widget_templates', [ $this, 'get_value_title_for_library_widget_templates' ], 10, 2 );
 		add_filter( 'elementor/widgets/black_list', function( $black_list ) {
 			$black_list[] = 'ElementorPro\Modules\Library\WP_Widgets\Elementor_Library';

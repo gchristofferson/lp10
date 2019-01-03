@@ -80,6 +80,7 @@ class Module extends Module_Base {
 				'type' => Controls_Manager::TEXTAREA,
 				'placeholder' => __( 'key|value', 'elementor-pro' ),
 				'description' => sprintf( __( 'Set custom attributes for the wrapper element. Each attribute in a separate line. Separate attribute key from the value using %s character.', 'elementor-pro' ), '<code>|</code>' ),
+				'classes' => 'elementor-control-direction-ltr',
 			]
 		);
 
