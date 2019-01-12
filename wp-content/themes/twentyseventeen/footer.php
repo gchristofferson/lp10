@@ -21,34 +21,28 @@
 				<?php
 				get_template_part( 'template-parts/footer/footer', 'widgets' );
 
-				if ( has_nav_menu( 'social' ) ) : ?>
+				if ( has_nav_menu( 'social' ) ) :
+					?>
 					<nav class="social-navigation" role="navigation" aria-label="<?php esc_attr_e( 'Footer Social Links Menu', 'twentyseventeen' ); ?>">
 						<?php
-							wp_nav_menu( array(
-								'theme_location' => 'social',
-								'menu_class'     => 'social-links-menu',
-								'depth'          => 1,
-								'link_before'    => '<span class="screen-reader-text">',
-								'link_after'     => '</span>' . twentyseventeen_get_svg( array( 'icon' => 'chain' ) ),
-							) );
+							wp_nav_menu(
+								array(
+									'theme_location' => 'social',
+									'menu_class'     => 'social-links-menu',
+									'depth'          => 1,
+									'link_before'    => '<span class="screen-reader-text">',
+									'link_after'     => '</span>' . twentyseventeen_get_svg( array( 'icon' => 'chain' ) ),
+								)
+							);
 						?>
 					</nav><!-- .social-navigation -->
-				<?php endif;
+					<?php
+				endif;
 
-				
+				get_template_part( 'template-parts/footer/site', 'info' );
 				?>
-				
-
-				
-				&copy; <?php
-  $fromYear = 2011; 
-  $thisYear = (int)date('Y'); 
-  echo $fromYear . (($fromYear != $thisYear) ? '-' . $thisYear : '');?> Ken Casey All Rights Reserved | <a href="index.php/privacy-policy">Privacy Policy</a> | <a href="index.php/terms-of-use">Terms of Use</a>
-
-				
-				
 			</div><!-- .wrap -->
-				</footer><!-- #colophon -->
+		</footer><!-- #colophon -->
 	</div><!-- .site-content-contain -->
 </div><!-- #page -->
 <?php wp_footer(); ?>
