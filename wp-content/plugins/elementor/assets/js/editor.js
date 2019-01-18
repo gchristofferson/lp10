@@ -1,4 +1,4 @@
-/*! elementor - v2.4.0 - 14-01-2019 */
+/*! elementor - v2.4.1 - 15-01-2019 */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -6099,7 +6099,11 @@ var App = Marionette.Application.extend({
 	}
 });
 
-module.exports = (window.elementor = new App()).start();
+window.elementor = new App();
+if (-1 === location.href.search('ELEMENTOR_TESTS=1')) {
+	window.elementor.start();
+}
+module.exports = window.elementor;
 
 /***/ }),
 /* 48 */

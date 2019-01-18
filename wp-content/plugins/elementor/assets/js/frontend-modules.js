@@ -1,4 +1,4 @@
-/*! elementor - v2.4.0 - 14-01-2019 */
+/*! elementor - v2.4.1 - 15-01-2019 */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -121,7 +121,8 @@ var _class = function (_elementorModules$Vie) {
 		value: function getDefaultSettings() {
 			return {
 				selectors: {
-					elements: '.elementor-element'
+					elements: '.elementor-element',
+					nestedDocumentElements: '.elementor .elementor-element'
 				},
 				classes: {
 					editMode: 'elementor-edit-mode'
@@ -134,7 +135,7 @@ var _class = function (_elementorModules$Vie) {
 			var selectors = this.getSettings('selectors');
 
 			return {
-				$elements: this.$element.find(selectors.elements)
+				$elements: this.$element.find(selectors.elements).not(this.$element.find(selectors.nestedDocumentElements))
 			};
 		}
 	}, {
