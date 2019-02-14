@@ -32,7 +32,7 @@ class IS_Search_Editor
         }
         echo  '<ul id="search-form-editor-tabs">' ;
         $url = esc_url( menu_page_url( 'ivory-search-new', false ) );
-        if ( isset( $_GET['post'] ) ) {
+        if ( isset( $_GET['post'] ) && is_numeric( $_GET['post'] ) ) {
             $url = esc_url( menu_page_url( 'ivory-search', false ) ) . '&post=' . $_GET['post'] . '&action=edit';
         }
         $tab = ( isset( $_GET['tab'] ) ? $_GET['tab'] : 'includes' );
@@ -727,7 +727,7 @@ class IS_Search_Editor
             ?></a></span></h3>
 			<div>
 				<?php 
-            $content = __( 'Configure searching to search based on posts that have a specific MIME type or files that have specific media attachments', 'ivory-search' );
+            $content = __( 'Configure the option to search files, media, attachments, images, documents or post types of specific MIME type.', 'ivory-search' );
             IS_Help::help_info( $content );
             echo  '<div>' ;
             

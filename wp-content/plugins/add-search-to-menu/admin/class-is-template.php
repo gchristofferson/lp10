@@ -29,7 +29,6 @@ class IS_Template {
 				),
 			'search_title'   => 1,
 			'search_content' => 1,
-			'search_excerpt' => 1,
 		);
 
 		return $template;

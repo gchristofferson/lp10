@@ -29,6 +29,7 @@ function is_fs()
             'menu'            => array(
             'slug'    => 'ivory-search',
             'support' => false,
+	    'affiliation'    => false,
         ),
             'is_live'         => true,
         ) );

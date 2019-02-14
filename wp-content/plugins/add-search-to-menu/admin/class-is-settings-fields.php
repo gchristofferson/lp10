@@ -396,7 +396,7 @@ class IS_Settings_Fields
      */
     function menu_title()
     {
-        $content = __( 'Displays set menu title text in place of search icon displays in navigation menu.', 'ivory-search' );
+        $content = __( 'Displays the set menu title text in place of search icon in the navigation menu.', 'ivory-search' );
         IS_Help::help_info( $content );
         $this->opt['add_search_to_menu_title'] = ( isset( $this->opt['add_search_to_menu_title'] ) ? $this->opt['add_search_to_menu_title'] : '' );
         $this->opt['menu_title'] = ( isset( $this->opt['menu_title'] ) ? $this->opt['menu_title'] : $this->opt['add_search_to_menu_title'] );

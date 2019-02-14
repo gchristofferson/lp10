@@ -266,7 +266,6 @@ class IS_Admin
             ),
                 'search_title'   => 1,
                 'search_content' => 1,
-                'search_excerpt' => 1,
             );
             $args['_is_excludes'] = '';
             $args['_is_settings'] = '';
@@ -739,10 +738,12 @@ class IS_Admin
             return $defaults;
         }
         $defaults = wp_parse_args( $defaults, array(
-            'post_type' => array(
+            'post_type'      => array(
             'post' => 'post',
             'page' => 'page',
         ),
+            'search_title'   => 1,
+            'search_content' => 1,
         ) );
         $input = wp_parse_args( $input, $defaults );
         $output = $this->sanitize_fields( $input );

@@ -19,13 +19,13 @@
 }
 
 .is-menu.default form {
-	max-width: 300px;
+	max-width: 310px;
 	position: static;
 }
 
 .is-menu.dropdown form {
 	display: none;
-	min-width: 300px;
+	min-width: 310px;
 	max-width: 100%;
 	position: absolute;
 	right: 0;
@@ -43,6 +43,10 @@
 	width: 0;
 	z-index: 9;
 
+}
+
+.is-menu.full-width-menu input.search-field {
+	width: 75%;
 }
 
 .is-menu.full-width-menu.active-search {
@@ -88,7 +92,7 @@
 }
 
 .gsc-cse-search-menu {
-	max-width: 300px;
+	max-width: 310px;
 	float: right
 }
 
