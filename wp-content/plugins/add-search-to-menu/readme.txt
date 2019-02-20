@@ -5,7 +5,7 @@ Tags: search, woocommerce search, image search, search shortcode,  exclude from 
 Requires at least: 3.9
 Tested up to: 5.0
 Requires PHP: 5.2.4
-Stable tag: 4.1.6
+Stable tag: 4.1.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -177,6 +177,9 @@ Yes we do. We try our best to help free users with customisation requests and we
 10. Displays full width search form in the menu.
 
 == Changelog ==
+
+= 4.1.7 =
+* Fixed - Post title and content options saving issue.
 
 = 4.1.6 =
 * Fixed -  Post type issue when reset search form.

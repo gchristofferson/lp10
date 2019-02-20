@@ -567,7 +567,14 @@ class IS_Admin
                 $args['id'] = $id;
                 $args['title'] = ( isset( $_POST['post_title'] ) ? $_POST['post_title'] : null );
                 $args['_is_locale'] = null;
-                $args['_is_includes'] = '';
+                $args['_is_includes'] = array(
+                    'post_type'      => array(
+                    'post' => 'post',
+                    'page' => 'page',
+                ),
+                    'search_title'   => 1,
+                    'search_content' => 1,
+                );
                 $args['_is_excludes'] = '';
                 $args['_is_settings'] = '';
                 $search_form = $this->save_form( $args );
@@ -738,12 +745,10 @@ class IS_Admin
             return $defaults;
         }
         $defaults = wp_parse_args( $defaults, array(
-            'post_type'      => array(
+            'post_type' => array(
             'post' => 'post',
             'page' => 'page',
         ),
-            'search_title'   => 1,
-            'search_content' => 1,
         ) );
         $input = wp_parse_args( $input, $defaults );
         $output = $this->sanitize_fields( $input );

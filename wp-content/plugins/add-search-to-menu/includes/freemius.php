@@ -27,9 +27,9 @@ function is_fs()
             'has_paid_plans'  => true,
             'has_affiliation' => 'selected',
             'menu'            => array(
-            'slug'    => 'ivory-search',
-            'support' => false,
-	    'affiliation'    => false,
+            'slug'        => 'ivory-search',
+            'support'     => false,
+            'affiliation' => false,
         ),
             'is_live'         => true,
         ) );
