@@ -193,21 +193,21 @@ class IS_Settings_Fields
                 );
                 add_settings_field(
                     'ivory_search_header',
-                    __( 'Header', 'ivory-search' ),
+                    __( 'Header Search', 'ivory-search' ),
                     array( $this, 'header' ),
                     'ivory_search',
                     'ivory_search_settings'
                 );
                 add_settings_field(
                     'ivory_search_footer',
-                    __( 'Footer', 'ivory-search' ),
+                    __( 'Footer Search', 'ivory-search' ),
                     array( $this, 'footer' ),
                     'ivory_search',
                     'ivory_search_settings'
                 );
                 add_settings_field(
                     'ivory_search_display_in_header',
-                    __( 'Mobile Display', 'ivory-search' ),
+                    __( 'Mobile Search', 'ivory-search' ),
                     array( $this, 'menu_search_in_header' ),
                     'ivory_search',
                     'ivory_search_settings'
@@ -235,14 +235,14 @@ class IS_Settings_Fields
                 );
                 add_settings_field(
                     'not_load_files',
-                    __( 'Not load files', 'ivory-search' ),
+                    __( 'Do Not Load Plugin Files', 'ivory-search' ),
                     array( $this, 'plugin_files' ),
                     'ivory_search',
                     'ivory_search_settings'
                 );
                 add_settings_field(
                     'ivory_search_disable',
-                    __( 'Disable', 'ivory-search' ),
+                    __( 'Disable Search', 'ivory-search' ),
                     array( $this, 'disable' ),
                     'ivory_search',
                     'ivory_search_settings'
@@ -266,7 +266,7 @@ class IS_Settings_Fields
      */
     function menu_search_section_desc()
     {
-        echo  '<h4 class="panel-desc">' . __( 'Use below options to display search in menu and configure it.', 'ivory-search' ) . '</h4>' ;
+        echo  '<h4 class="panel-desc">' . __( 'Display search in menu and configure it using below options.', 'ivory-search' ) . '</h4>' ;
     }
     
     /**
@@ -274,7 +274,7 @@ class IS_Settings_Fields
      */
     function settings_section_desc()
     {
-        echo  '<h4 class="panel-desc">' . __( 'Use below options to make sitewide changes in search.', 'ivory-search' ) . '</h4>' ;
+        echo  '<h4 class="panel-desc">' . __( 'Make search changes on entire website using below options.', 'ivory-search' ) . '</h4>' ;
     }
     
     /**
@@ -282,7 +282,7 @@ class IS_Settings_Fields
      */
     function menu_locations()
     {
-        $content = __( 'Select menu here where you want to display search form.', 'ivory-search' );
+        $content = __( 'Display search form on selected menu.', 'ivory-search' );
         IS_Help::help_info( $content );
         $html = '';
         $menus = get_registered_nav_menus();
@@ -301,7 +301,7 @@ class IS_Settings_Fields
                 $html .= '<span class="toggle-check-text"></span> ' . esc_html( $description ) . '</label></p>';
             }
         } else {
-            $html = __( 'No navigation menu registered on your site.', 'ivory-search' );
+            $html = __( 'Navigation menu location is not registered on the site.', 'ivory-search' );
         }
         
         echo  '<div>' . $html . '</div>' ;
@@ -312,7 +312,7 @@ class IS_Settings_Fields
      */
     function menu_search_form()
     {
-        $content = __( 'Select search form that will control search performed using menu search.', 'ivory-search' );
+        $content = __( 'Select search form that will control menu search functionality.', 'ivory-search' );
         IS_Help::help_info( $content );
         $html = '<p>';
         $form_disable = ( is_fs()->is_plan_or_trial( 'pro' ) && $this->is_premium_plugin ? false : true );
@@ -358,7 +358,7 @@ class IS_Settings_Fields
      */
     function menu_form_style()
     {
-        $content = __( 'Select form style for the search form displayed in the menu.', 'ivory-search' );
+        $content = __( 'Select menu search form style.', 'ivory-search' );
         IS_Help::help_info( $content );
         $styles = array(
             'default'         => __( 'Default', 'ivory-search' ),
@@ -396,7 +396,7 @@ class IS_Settings_Fields
      */
     function menu_title()
     {
-        $content = __( 'Displays the set menu title text in place of search icon in the navigation menu.', 'ivory-search' );
+        $content = __( 'Add menu title to display in place of search icon.', 'ivory-search' );
         IS_Help::help_info( $content );
         $this->opt['add_search_to_menu_title'] = ( isset( $this->opt['add_search_to_menu_title'] ) ? $this->opt['add_search_to_menu_title'] : '' );
         $this->opt['menu_title'] = ( isset( $this->opt['menu_title'] ) ? $this->opt['menu_title'] : $this->opt['add_search_to_menu_title'] );
@@ -409,12 +409,12 @@ class IS_Settings_Fields
      */
     function menu_classes()
     {
-        $content = __( 'Adds set classes in the search navigation menu item.', 'ivory-search' );
+        $content = __( 'Add class to search form menu item.', 'ivory-search' );
         IS_Help::help_info( $content );
         $this->opt['add_search_to_menu_classes'] = ( isset( $this->opt['add_search_to_menu_classes'] ) ? $this->opt['add_search_to_menu_classes'] : '' );
         $this->opt['menu_classes'] = ( isset( $this->opt['menu_classes'] ) ? $this->opt['menu_classes'] : $this->opt['add_search_to_menu_classes'] );
         $html = '<input class="ivory_search_classes" type="text" class="ivory_search_classes" id="is_menu_classes" name="is_menu_search[menu_classes]" value="' . esc_attr( $this->opt['menu_classes'] ) . '" />';
-        $html .= '<br /><label for="is_menu_classes" style="font-size: 10px;">' . esc_html__( "Add classes seperated by space.", 'ivory-search' ) . '</label>';
+        $html .= '<br /><label for="is_menu_classes" style="font-size: 10px;">' . esc_html__( "Add multiple classes seperated by space.", 'ivory-search' ) . '</label>';
         echo  '<div>' . $html . '</div>' ;
     }
     
@@ -423,7 +423,7 @@ class IS_Settings_Fields
      */
     function menu_google_cse()
     {
-        $content = __( 'Add only Google Custom Search( CSE ) search form code in the above text box that will replace default search form.', 'ivory-search' );
+        $content = __( 'Add Google Custom Search( CSE ) search form code that will replace default search form.', 'ivory-search' );
         IS_Help::help_info( $content );
         $this->opt['add_search_to_menu_gcse'] = ( isset( $this->opt['add_search_to_menu_gcse'] ) ? $this->opt['add_search_to_menu_gcse'] : '' );
         $this->opt['menu_gcse'] = ( isset( $this->opt['menu_gcse'] ) ? $this->opt['menu_gcse'] : $this->opt['add_search_to_menu_gcse'] );
@@ -445,7 +445,7 @@ class IS_Settings_Fields
         }
         
         $html = '<label for="menu_close_icon"><input class="ivory_search_close_icon" type="checkbox" id="menu_close_icon" name="is_menu_search[menu_close_icon]" value="menu_close_icon" ' . $check_string . ' />';
-        $html .= '<span class="toggle-check-text"></span>' . esc_html__( 'Display Search Form Close Icon', 'ivory-search' ) . '</label>';
+        $html .= '<span class="toggle-check-text"></span>' . esc_html__( 'Display search form close icon', 'ivory-search' ) . '</label>';
         echo  '<div>' . $html . '</div>' ;
     }
     
@@ -454,7 +454,7 @@ class IS_Settings_Fields
      */
     function header()
     {
-        $content = __( 'Displays search form in site header using wp_head hook.', 'ivory-search' );
+        $content = __( 'Select search form to display in site header.', 'ivory-search' );
         IS_Help::help_info( $content );
         $html = '';
         $args = array(
@@ -488,7 +488,7 @@ class IS_Settings_Fields
      */
     function footer()
     {
-        $content = __( 'Displays search form in site footer using wp_footer hook.', 'ivory-search' );
+        $content = __( 'Select search form to display in site footer.', 'ivory-search' );
         IS_Help::help_info( $content );
         $html = '';
         $args = array(
@@ -522,8 +522,6 @@ class IS_Settings_Fields
      */
     function menu_search_in_header()
     {
-        $content = __( 'Note: Does not work with caching as this functionality uses the WordPress wp_is_mobile function.', 'ivory-search' );
-        IS_Help::help_info( $content );
         $check_value = ( isset( $this->opt['add_search_to_menu_display_in_header'] ) ? $this->opt['add_search_to_menu_display_in_header'] : 0 );
         $check_string = checked( 'add_search_to_menu_display_in_header', $check_value, false );
         
@@ -533,10 +531,10 @@ class IS_Settings_Fields
         }
         
         $html = '<label for="is_search_in_header"><input class="ivory_search_display_in_header" type="checkbox" id="is_search_in_header" name="is_settings[header_menu_search]" value="header_menu_search" ' . $check_string . ' />';
-        $html .= '<span class="toggle-check-text"></span>' . esc_html__( 'Display search form in header on mobile devices', 'ivory-search' ) . '</label>';
+        $html .= '<span class="toggle-check-text"></span>' . esc_html__( 'Display search form in site header on mobile devices', 'ivory-search' ) . '</label>';
         echo  '<div>' . $html . '</div><br />' ;
         $html = '';
-        $content = __( 'Use this option to display search form in your site header and hide the search form on desktop using CSS code.', 'ivory-search' );
+        $content = __( 'If this site uses cache then please select the below option to display search form on mobile.', 'ivory-search' );
         IS_Help::help_info( $content );
         $check_value = ( isset( $this->opt['astm_site_uses_cache'] ) ? $this->opt['astm_site_uses_cache'] : 0 );
         $check_string = checked( 'astm_site_uses_cache', $check_value, false );
@@ -556,7 +554,7 @@ class IS_Settings_Fields
      */
     function custom_css()
     {
-        $content = __( 'Add custom css code if any to style search form.', 'ivory-search' );
+        $content = __( 'Add custom css code.', 'ivory-search' );
         IS_Help::help_info( $content );
         $this->opt['add_search_to_menu_css'] = ( isset( $this->opt['add_search_to_menu_css'] ) ? $this->opt['add_search_to_menu_css'] : '' );
         $this->opt['custom_css'] = ( isset( $this->opt['custom_css'] ) ? $this->opt['custom_css'] : $this->opt['add_search_to_menu_css'] );
@@ -569,12 +567,11 @@ class IS_Settings_Fields
      */
     function stopwords()
     {
-        $content = __( 'Enter words here to add them to the list of stopwords. The stopwords will not be searched.', 'ivory-search' );
-        $content .= '<br />' . __( 'This works with search form.', 'ivory-search' );
+        $content = __( 'Enter stopwords here that will not be searched.', 'ivory-search' );
         IS_Help::help_info( $content );
         $this->opt['stopwords'] = ( isset( $this->opt['stopwords'] ) ? $this->opt['stopwords'] : '' );
         $html = '<textarea class="ivory_search_stopwords" rows="4" id="stopwords" name="is_settings[stopwords]" >' . esc_attr( $this->opt['stopwords'] ) . '</textarea>';
-        $html .= '<br /><label for="stopwords" style="font-size: 10px;">' . esc_html__( "Please separate words with commas.", 'ivory-search' ) . '</label>';
+        $html .= '<br /><label for="stopwords" style="font-size: 10px;">' . esc_html__( "Please separate multiple words with commas.", 'ivory-search' ) . '</label>';
         echo  '<div>' . $html . '</div>' ;
     }
     
@@ -585,11 +582,15 @@ class IS_Settings_Fields
     {
         $content = __( 'Add synonyms here to make the searches find better results.', 'ivory-search' );
         $content .= '<br /><br />' . __( 'If you add bird = crow to the list of synonyms, searches for bird automatically become a search for bird crow and will thus match to posts that include either bird or crow.', 'ivory-search' );
-        $content .= '<br /><br />' . __( 'This only works for search forms and in OR searches. In AND searches the synonyms only restrict the search, as now the search only finds posts that contain both bird and crow.', 'ivory-search' );
         IS_Help::help_info( $content );
         $this->opt['synonyms'] = ( isset( $this->opt['synonyms'] ) ? $this->opt['synonyms'] : '' );
         $html = '<textarea class="ivory_search_synonyms" rows="4" id="synonyms" name="is_settings[synonyms]" >' . esc_attr( $this->opt['synonyms'] ) . '</textarea>';
-        $html .= '<br /><label for="synonyms" style="font-size: 10px;">' . esc_html__( 'The format here is key = value;. Please separate every synonyms key = value pairs with semicolon.', 'ivory-search' ) . '</label>';
+        $html .= '<br /><label for="synonyms" style="font-size: 10px;">' . esc_html__( 'The format here is key = value;', 'ivory-search' ) . '</label>';
+        $html .= '<br /><label for="synonyms" style="font-size: 10px;">' . esc_html__( 'Please separate every synonyms key = value pairs with semicolon.', 'ivory-search' ) . '</label>';
+        echo  '<div>' . $html . '</div>' ;
+        $html = '';
+        $content = __( 'This only works for search forms configured to search any of the search terms(OR) and not all search terms(AND).', 'ivory-search' );
+        IS_Help::help_info( $content );
         $synonyms_disable = ( is_fs()->is_plan_or_trial( 'pro' ) && $this->is_premium_plugin ? '' : ' disabled ' );
         $check_value = ( isset( $this->opt['synonyms_and'] ) ? $this->opt['synonyms_and'] : 0 );
         $disable = checked( 1, $check_value, false );
@@ -601,8 +602,8 @@ class IS_Settings_Fields
         }
         
         $html .= '<label for="synonyms_and"><input class="ivory_search_synonyms" type="checkbox" ' . $synonyms_disable . ' id="synonyms_and" name="is_settings[synonyms_and]" value="1" ' . $disable . ' />';
-        $html .= '<span class="toggle-check-text"></span>' . esc_html__( 'Disable synonyms for the search forms having AND search terms relation.', 'ivory-search' ) . '</label>';
-        echo  '</p><div>' . $html . '</div>' ;
+        $html .= '<span class="toggle-check-text"></span>' . esc_html__( 'Disable synonyms for the search forms configured to search all search terms', 'ivory-search' ) . '</label></p>';
+        echo  '<div>' . $html . '</div>' ;
     }
     
     /**
@@ -610,11 +611,11 @@ class IS_Settings_Fields
      */
     function plugin_files()
     {
-        $content = __( 'Configure to disable loading plugin CSS and JavaScript files.', 'ivory-search' );
+        $content = __( 'Enable below options to disable loading of plugin CSS and JavaScript files.', 'ivory-search' );
         IS_Help::help_info( $content );
         $styles = array(
-            'css' => __( 'Plugin CSS File', 'ivory-search' ),
-            'js'  => __( 'Plugin JavaScript File', 'ivory-search' ),
+            'css' => __( 'Plugin CSS files', 'ivory-search' ),
+            'js'  => __( 'Plugin JavaScript files', 'ivory-search' ),
         );
         $html = '';
         foreach ( $styles as $key => $file ) {
@@ -651,7 +652,7 @@ class IS_Settings_Fields
         $check_value = ( isset( $this->opt['disable'] ) ? $this->opt['disable'] : 0 );
         $disable = checked( 1, $check_value, false );
         $html = '<label for="is_disable"><input class="ivory_search_disable" type="checkbox" id="is_disable" name="is_settings[disable]" value="1" ' . $disable . ' />';
-        $html .= '<span class="toggle-check-text"></span>' . esc_html__( 'Disable search functionality on whole site.', 'ivory-search' ) . '</label>';
+        $html .= '<span class="toggle-check-text"></span>' . esc_html__( 'Disable search functionality on entire website', 'ivory-search' ) . '</label>';
         echo  '<div>' . $html . '</div>' ;
     }
     
@@ -663,7 +664,7 @@ class IS_Settings_Fields
         $check_value = ( isset( $this->opt['default_search'] ) ? $this->opt['default_search'] : 0 );
         $disable = checked( 1, $check_value, false );
         $html = '<label for="is_default_search"><input class="ivory_search_default" type="checkbox" id="is_default_search" name="is_settings[default_search]" value="1" ' . $disable . ' />';
-        $html .= '<span class="toggle-check-text"></span>' . esc_html__( 'Do not use default search form to control WordPress default search functionality.', 'ivory-search' ) . '</label>';
+        $html .= '<span class="toggle-check-text"></span>' . esc_html__( 'Do not use Default Search Form to control WordPress default search functionality', 'ivory-search' ) . '</label>';
         echo  '<div>' . $html . '</div>' ;
     }
 

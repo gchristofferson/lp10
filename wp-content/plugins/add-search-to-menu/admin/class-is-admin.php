@@ -76,8 +76,91 @@ class IS_Admin
             'saveAlert' => __( "The changes you made will be lost if you navigate away from this page.", 'ivory-search' ),
             'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
         );
+        
+        if ( $this->custom_admin_pointers_check() ) {
+            add_action( 'admin_print_footer_scripts', array( $this, 'custom_admin_pointers_footer' ) );
+            wp_enqueue_script( 'wp-pointer' );
+            wp_enqueue_style( 'wp-pointer' );
+        }
+        
         wp_localize_script( 'is-admin-scripts', 'ivory_search', $args );
         wp_enqueue_script( 'is-admin-scripts' );
+    }
+    
+    function custom_admin_pointers_check()
+    {
+        $admin_pointers = $this->custom_admin_pointers();
+        foreach ( $admin_pointers as $pointer => $array ) {
+            if ( $array['active'] ) {
+                return true;
+            }
+        }
+    }
+    
+    function custom_admin_pointers_footer()
+    {
+        $admin_pointers = $this->custom_admin_pointers();
+        ?>
+	     <script type="text/javascript">
+	     /* <![CDATA[ */
+	     ( function($) {
+		<?php 
+        foreach ( $admin_pointers as $pointer => $array ) {
+            
+            if ( $array['active'] ) {
+                ?>
+		      $( '<?php 
+                echo  $array['anchor_id'] ;
+                ?>' ).pointer( {
+			 content: '<?php 
+                echo  $array['content'] ;
+                ?>',
+			 position: {
+			 edge: '<?php 
+                echo  $array['edge'] ;
+                ?>',
+			 align: '<?php 
+                echo  $array['align'] ;
+                ?>'
+		      },
+			 close: function() {
+			    $.post( ajaxurl, {
+			       pointer: '<?php 
+                echo  $pointer ;
+                ?>',
+			       action: 'dismiss-wp-pointer'
+			    } );
+			 }
+		      } ).pointer( 'open' );
+		      <?php 
+            }
+        
+        }
+        ?>
+	     } )(jQuery);
+	     /* ]]> */
+	     </script>
+		<?php 
+    }
+    
+    function custom_admin_pointers()
+    {
+        $dismissed = explode( ',', (string) get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true ) );
+        $version = '1_0';
+        // replace all periods in 1.0 with an underscore
+        $prefix = 'is_admin_pointers_' . $version . '_';
+        $new_pointer_content = '<h3>' . __( 'Edit Search Form', 'ivory-search' ) . '</h3>';
+        $new_pointer_content .= '<p>' . __( 'Click on the search form link to edit it.', 'ivory-search' ) . '</p>';
+        $new_pointer_content .= '<p>' . __( 'Edit the Default Search Form to manage the default WordPress search.', 'ivory-search' ) . '</p>';
+        return array(
+            $prefix . 'is_pointers' => array(
+            'content'   => $new_pointer_content,
+            'anchor_id' => '#the-list tr:first-child a.row-title',
+            'edge'      => 'left',
+            'align'     => 'left',
+            'active'    => !in_array( $prefix . 'is_pointers', $dismissed ),
+        ),
+        );
     }
     
     /**
@@ -100,6 +183,21 @@ class IS_Admin
     }
     
     /**
+     * Change the admin footer text on Ivory Search admin pages.
+     */
+    public function admin_footer_text( $footer_text )
+    {
+        $screen = get_current_screen();
+        $is_ivory = strpos( $screen->id, 'ivory-search' );
+        // Check to make sure we're on a Ivory Search admin page.
+        if ( FALSE !== $is_ivory ) {
+            // Change the footer text
+            $footer_text = sprintf( __( 'If you like %1$s please leave us a %2$s rating. A huge thanks in advance!', 'ivory-search' ), sprintf( '<strong>%s</strong>', esc_html__( 'Ivory Search', 'ivory-search' ) ), '<a href="https://wordpress.org/support/plugin/add-search-to-menu/reviews?rate=5#new-post" target="_blank" class="is-rating-link" data-rated="' . esc_attr__( 'Thanks :)', 'ivory-search' ) . '">&#9733;&#9733;&#9733;&#9733;&#9733;</a>' );
+        }
+        return $footer_text;
+    }
+    
+    /**
      * Displays plugin configuration notice in admin area.
      */
     function all_admin_notices()
@@ -114,7 +212,7 @@ class IS_Admin
                 if ( !isset( $this->opt['is_notices']['config'] ) || !$this->opt['is_notices']['config'] ) {
                     $url = ( is_network_admin() ? network_site_url() : site_url( '/' ) );
                     echo  '<div class="notice ivory-search"><p>' . sprintf(
-                        __( 'To configure <em>Ivory Search plugin</em> please visit its <a href="%1$s">configuration page</a> and to get plugin support contact us on <a href="%2$s" target="_blank">plugin support forum</a> or <a href="%3$s" target="_blank">contact us page</a>.', 'ivory-search' ),
+                        __( 'Thank you for using <strong>Ivory Search</strong> plugin. Please configure its <a href="%1$s">search form</a> and get support on <a href="%2$s" target="_blank">support forum</a> or <a href="%3$s" target="_blank">contact us</a>.', 'ivory-search' ),
                         $url . 'wp-admin/admin.php?page=ivory-search',
                         'https://ivorysearch.com/support/',
                         'https://ivorysearch.com/contact/'
@@ -352,7 +450,7 @@ class IS_Admin
             'ivory-search',
             array( $this, 'search_forms_page' ),
             'dashicons-search',
-            35
+            '35.6282'
         );
         $edit = add_submenu_page(
             'ivory-search',
@@ -437,7 +535,7 @@ class IS_Admin
         echo  esc_attr( $_REQUEST['page'] ) ;
         ?>" />
 			<?php 
-        $list_table->search_box( __( 'Search Search Forms', 'ivory-search' ), 'is-search' );
+        $list_table->search_box( __( 'Find Search Forms', 'ivory-search' ), 'is-search' );
         ?>
 			<?php 
         $list_table->display();
@@ -491,6 +589,17 @@ class IS_Admin
             $args['_is_excludes'] = ( isset( $_POST['_is_excludes'] ) ? $_POST['_is_excludes'] : '' );
             $args['_is_settings'] = ( isset( $_POST['_is_settings'] ) ? $_POST['_is_settings'] : '' );
             $args['tab'] = ( isset( $_POST['tab'] ) ? $_POST['tab'] : 'includes' );
+            $search_form = IS_Search_Form::get_instance( $id );
+            $properties = $search_form->get_properties();
+            
+            if ( 'includes' === $args['tab'] && !empty($properties['_is_excludes']) ) {
+                $args['_is_excludes'] = $properties['_is_excludes'];
+            } else {
+                if ( 'excludes' === $args['tab'] && !empty($properties['_is_includes']) ) {
+                    $args['_is_includes'] = $properties['_is_includes'];
+                }
+            }
+            
             $invalid = false;
             if ( !empty($args['_is_includes']) && !empty($args['_is_excludes']) ) {
                 foreach ( $args['_is_includes'] as $key => $value ) {
@@ -833,10 +942,16 @@ class IS_Admin
     public static function pro_link( $plan = 'pro' )
     {
         $is_premium_plugin = false;
-        $msg = esc_html__( "Upgrade To Access", 'ivory-search' );
+        $msg = esc_html__( "Upgrade to Pro to Access", 'ivory-search' );
+        
         if ( is_fs()->is_plan_or_trial( $plan ) ) {
-            $msg = esc_html__( "Install Pro Version To Access", 'ivory-search' );
+            $msg = esc_html__( "Install Premium Version to Access", 'ivory-search' );
+        } else {
+            if ( 'pro_plus' === $plan ) {
+                $msg = esc_html__( "Upgrade to Pro Plus to Access", 'ivory-search' );
+            }
         }
+        
         
         if ( is_fs()->is_plan_or_trial( $plan ) && $is_premium_plugin ) {
             return '';

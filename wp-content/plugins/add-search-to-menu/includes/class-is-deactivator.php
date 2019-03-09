@@ -26,5 +26,18 @@ class IS_Deactivator {
 			unset( $is_notices['is_notices']['config'] );
 			update_option( 'is_notices', $is_notices );
 		}
+		$dismissed = explode( ',', (string) get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true ) );
+		$version = '1_0'; // replace all periods in 1.0 with an underscore
+		$prefix = 'is_admin_pointers_' . $version . '_';
+		if ( in_array( $prefix . 'is_pointers', $dismissed ) ) {
+			// Get the index in the array of the value we want to remove.
+			$index = array_search(  $prefix . 'is_pointers', $dismissed );
+			// Remove it.
+			unset( $dismissed[$index] );
+			// Make the list a comma separated string again.
+			$pointers = implode( ',', $dismissed );
+			// Save the updated value.
+			update_user_meta( get_current_user_id(), 'dismissed_wp_pointers', $pointers );
+		}
 	}
 }

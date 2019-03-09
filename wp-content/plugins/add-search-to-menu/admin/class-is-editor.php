@@ -93,7 +93,7 @@ class IS_Search_Editor
         ?>
 		<h4 class="panel-desc">
 			<?php 
-        _e( "Configure the below options to make specific content searchable.", 'ivory-search' );
+        _e( "This search form searches the below configured content.", 'ivory-search' );
         ?>
 		</h4>
 		<div class="search-form-editor-box" id="<?php 
@@ -118,7 +118,7 @@ class IS_Search_Editor
 			</h3>
 			<div>
 				<?php 
-        $content = __( 'Select post types that you want to make searchable.', 'ivory-search' );
+        $content = __( 'Search selected post types.', 'ivory-search' );
         IS_Help::help_info( $content );
         echo  '<div>' ;
         $args = array(
@@ -150,19 +150,19 @@ class IS_Search_Editor
                 $ind_status = true;
             }
             echo  '<br /><br /><p class="check-radio"><label for="' . $id . '-search_title"><input class="_is_includes-post_type" type="checkbox" id="' . $id . '-search_title" name="' . $id . '[search_title]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-            echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search in post title.", 'ivory-search' ) . '</label></p>' ;
+            echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search post title", 'ivory-search' ) . '</label></p>' ;
             $checked = ( isset( $includes['search_content'] ) && $includes['search_content'] ? 1 : 0 );
             if ( !$ind_status && !$checked ) {
                 $ind_status = true;
             }
             echo  '<p class="check-radio"><label for="' . $id . '-search_content"><input class="_is_includes-post_type" type="checkbox" id="' . $id . '-search_content" name="' . $id . '[search_content]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-            echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search in post content.", 'ivory-search' ) . '</label></p>' ;
+            echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search post content", 'ivory-search' ) . '</label></p>' ;
             $checked = ( isset( $includes['search_excerpt'] ) && $includes['search_excerpt'] ? 1 : 0 );
             if ( !$ind_status && !$checked ) {
                 $ind_status = true;
             }
             echo  '<p class="check-radio"><label for="' . $id . '-search_excerpt"><input class="_is_includes-post_type" type="checkbox" id="' . $id . '-search_excerpt" name="' . $id . '[search_excerpt]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-            echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search in post excerpt.", 'ivory-search' ) . '</label></p>' ;
+            echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search post excerpt", 'ivory-search' ) . '</label></p>' ;
             echo  '<br /><select class="_is_includes-post_type" name="' . $id . '[post_type_qs]" >' ;
             $checked = ( isset( $includes['post_type_qs'] ) ? $includes['post_type_qs'] : 'none' );
             if ( !$ind_status && 'none' !== $checked ) {
@@ -172,12 +172,12 @@ class IS_Search_Editor
             foreach ( $posts as $key => $post_type ) {
                 echo  '<option value="' . $key . '" ' . selected( $key, $checked, false ) . '>' . ucfirst( esc_html( $post_type ) ) . '</option>' ;
             }
-            echo  '</select><label for="' . $id . '-post_type_qs"> ' . esc_html( __( 'Display this post type in the search query URL and restrict search to it.', 'ivory-search' ) ) . '</label>' ;
+            echo  '</select><label for="' . $id . '-post_type_qs"> ' . esc_html( __( 'Add this selected post type in the search results URL and search only its content', 'ivory-search' ) ) . '</label>' ;
             if ( $ind_status ) {
                 echo  '<span class="ind-status ' . $id . '-post_type"></span>' ;
             }
         } else {
-            _e( 'No post types registered on your site.', 'ivory-search' );
+            echo  '<span class="notice-is-info">' . __( 'No post types registered on your site.', 'ivory-search' ) . '</span>' ;
         }
         
         ?>
@@ -187,7 +187,7 @@ class IS_Search_Editor
 				<label for="<?php 
         echo  $id ;
         ?>-post__in"><?php 
-        echo  esc_html( __( 'Posts', 'ivory-search' ) ) ;
+        echo  esc_html( __( 'Posts, Pages & Custom Posts', 'ivory-search' ) ) ;
         ?></label>
 			<span class="actions"><span class="indicator <?php 
         echo  $id ;
@@ -198,15 +198,14 @@ class IS_Search_Editor
         ?></a></span></h3>
 			<div>
 				<?php 
-        $content = __( 'The posts and pages of searchable post types display here.', 'ivory-search' );
-        $content .= '<br />' . __( 'Select the specific posts you wish to search or do not select any posts to make all posts searchable.', 'ivory-search' );
-        $content .= '<br />' . __( 'Selected post types display in BOLD.', 'ivory-search' );
+        $content = __( 'Search only selected posts.', 'ivory-search' );
         IS_Help::help_info( $content );
         echo  '<div>' ;
         $post_types = array( 'post', 'page' );
         if ( isset( $includes['post_type'] ) && !empty($includes['post_type']) && is_array( $includes['post_type'] ) ) {
             $post_types = array_values( $includes['post_type'] );
         }
+        $posts_found = false;
         foreach ( $post_types as $post_type ) {
             $posts = get_posts( array(
                 'post_type'      => $post_type,
@@ -216,6 +215,7 @@ class IS_Search_Editor
             ) );
             
             if ( !empty($posts) ) {
+                $posts_found = true;
                 $html = '<div class="col-wrapper"><div class="col-title">';
                 $col_title = '<span>' . ucwords( $post_type ) . '</span>';
                 $temp = '';
@@ -245,7 +245,13 @@ class IS_Search_Editor
             }
         
         }
-        echo  '<br /><label for="' . $id . '-post__in" style="font-size: 10px;clear:both;display:block;">' . esc_html__( "Press CTRL key & Left Mouse button to select multiple terms or deselect them.", 'ivory-search' ) . '</label>' ;
+        
+        if ( !$posts_found ) {
+            echo  '<span class="notice-is-info">' . __( 'No posts created for selected post types.', 'ivory-search' ) . '</span>' ;
+        } else {
+            echo  '<br /><label for="' . $id . '-post__in" style="font-size: 10px;clear:both;display:block;">' . esc_html__( "Press CTRL key & Left Mouse button to select multiple terms or deselect them.", 'ivory-search' ) . '</label>' ;
+        }
+        
         ?>
 			</div></div>
 
@@ -253,7 +259,7 @@ class IS_Search_Editor
 				<label for="<?php 
         echo  $id ;
         ?>-tax_query"><?php 
-        esc_html_e( 'Taxonomy Terms', 'ivory-search' );
+        esc_html_e( 'Category & Taxonomy Terms', 'ivory-search' );
         ?></label>
 			<span class="actions"><span class="indicator <?php 
         echo  $id ;
@@ -264,9 +270,7 @@ class IS_Search_Editor
         ?></a></span></h3>
 			<div>
 				<?php 
-        $content = __( 'Taxonomy terms that have no posts will not be visible below. Add a post with the taxonomy you want for it to be configurable.', 'ivory-search' );
-        $content .= '<br /><br />' . __( 'Terms selected here will restrict the search to posts that have the selected terms.', 'ivory-search' );
-        $content .= '<br />' . __( 'Taxonomy terms selected display in BOLD', 'ivory-search' );
+        $content = __( 'Search posts of only selected categories, taxonomies & terms.', 'ivory-search' );
         IS_Help::help_info( $content );
         echo  '<div>' ;
         $args = array( 'post', 'page' );
@@ -308,26 +312,26 @@ class IS_Search_Editor
                 $ind_status = true;
             }
             echo  '<br /><p class="check-radio"><label for="' . $id . '-tax_rel_and" ><input class="_is_includes-tax_query" type="radio" id="' . $id . '-tax_rel_and" name="' . $id . '[tax_rel]" value="AND" ' . checked( 'AND', $checked, false ) . '/>' ;
-            echo  '<span class="toggle-check-text"></span>' . esc_html__( "AND - Search posts having all the above selected terms.", 'ivory-search' ) . '</label></p>' ;
+            echo  '<span class="toggle-check-text"></span>' . esc_html__( "AND - Search posts having all the above selected terms", 'ivory-search' ) . '</label></p>' ;
             echo  '<p class="check-radio"><label for="' . $id . '-tax_rel_or" ><input class="_is_includes-tax_query" type="radio" id="' . $id . '-tax_rel_or" name="' . $id . '[tax_rel]" value="OR" ' . checked( 'OR', $checked, false ) . '/>' ;
-            echo  '<span class="toggle-check-text"></span>' . esc_html__( "OR - Search posts having any one of the above selected terms.", 'ivory-search' ) . '</label></p>' ;
+            echo  '<span class="toggle-check-text"></span>' . esc_html__( "OR - Search posts having any one of the above selected terms", 'ivory-search' ) . '</label></p>' ;
             $checked = ( isset( $includes['search_tax_title'] ) && $includes['search_tax_title'] ? 1 : 0 );
             if ( !$ind_status && $checked ) {
                 $ind_status = true;
             }
             echo  '<br /><p class="check-radio"><label for="' . $id . '-search_tax_title" ><input class="_is_includes-tax_query" type="checkbox" id="' . $id . '-search_tax_title" name="' . $id . '[search_tax_title]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-            echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search in taxonomy terms title.", 'ivory-search' ) . '</label></p>' ;
+            echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search term title", 'ivory-search' ) . '</label></p>' ;
             $checked = ( isset( $includes['search_tax_desp'] ) && $includes['search_tax_desp'] ? 1 : 0 );
             if ( !$ind_status && $checked ) {
                 $ind_status = true;
             }
             echo  '<p class="check-radio"><label for="' . $id . '-search_tax_desp" ><input class="_is_includes-tax_query" type="checkbox" id="' . $id . '-search_tax_desp" name="' . $id . '[search_tax_desp]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-            echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search in taxonomy terms description.", 'ivory-search' ) . '</label></p>' ;
+            echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search term description", 'ivory-search' ) . '</label></p>' ;
             if ( $ind_status ) {
                 echo  '<span class="ind-status ' . $id . '-tax_query"></span>' ;
             }
         } else {
-            _e( 'No taxonomies registered for selected post types.', 'ivory-search' );
+            echo  '<span class="notice-is-info">' . __( 'No taxonomies registered for selected post types.', 'ivory-search' ) . '</span>' ;
         }
         
         ?>
@@ -338,7 +342,7 @@ class IS_Search_Editor
 				<label for="<?php 
         echo  $id ;
         ?>-custom_field"><?php 
-        echo  esc_html( __( 'Custom Fields', 'ivory-search' ) ) ;
+        echo  esc_html( __( 'Custom Fields & Metadata', 'ivory-search' ) ) ;
         ?></label>
 			<span class="actions"><span class="indicator <?php 
         echo  $id ;
@@ -349,7 +353,7 @@ class IS_Search_Editor
         ?></a></span></h3>
 			<div>
 				<?php 
-        $content = __( 'Select custom fields to make their values searchable.', 'ivory-search' );
+        $content = __( 'Search values of selected custom fields.', 'ivory-search' );
         IS_Help::help_info( $content );
         echo  '<div>' ;
         $args = array( 'post', 'page' );
@@ -367,6 +371,8 @@ class IS_Search_Editor
             }
             echo  '</select>' ;
             echo  '<br /><label for="' . $id . '-custom_field" style="font-size: 10px;clear:both;display:block;">' . esc_html__( "Press CTRL key & Left Mouse button to select multiple terms or deselect them.", 'ivory-search' ) . '</label>' ;
+        } else {
+            echo  '<span class="notice-is-info">' . __( 'No custom fields created for selected post types.', 'ivory-search' ) . '</span>' ;
         }
         
         
@@ -397,7 +403,7 @@ class IS_Search_Editor
         ?></a></span></h3>
 			<div>
 				<?php 
-        $content = __( 'Configure WooCommerce products search options here.', 'ivory-search' );
+        $content = __( 'Search WooCommerce products.', 'ivory-search' );
         IS_Help::help_info( $content );
         echo  '<div>' ;
         
@@ -415,23 +421,23 @@ class IS_Search_Editor
                     $ind_status = true;
                 }
                 echo  '<p class="check-radio"><label for="' . $id . '-sku" ><input class="_is_includes-woocommerce" type="checkbox" ' . $woo_sku_disable . ' id="' . $id . '-sku" name="' . $id . '[woo][sku]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-                echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search in WooCommerce products SKU.", 'ivory-search' ) . '</label></p>' ;
+                echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search product SKU", 'ivory-search' ) . '</label></p>' ;
                 $checked = ( isset( $includes['woo']['variation'] ) && $includes['woo']['variation'] ? 1 : 0 );
                 if ( !$ind_status && $checked ) {
                     $ind_status = true;
                 }
                 echo  '<p class="check-radio"><label for="' . $id . '-variation" ><input class="_is_includes-woocommerce" type="checkbox" ' . $woo_sku_disable . ' id="' . $id . '-variation" name="' . $id . '[woo][variation]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-                echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search in WooCommerce products variation.", 'ivory-search' ) . '</label>' ;
+                echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search product variation", 'ivory-search' ) . '</label>' ;
                 echo  IS_Admin::pro_link( 'pro_plus' ) . '</p>' ;
                 if ( $ind_status ) {
                     echo  '<span class="ind-status ' . $id . '-woocommerce"></span>' ;
                 }
             } else {
-                _e( 'WooCommerce product post type is not included in search.', 'ivory-search' );
+                echo  '<span class="notice-is-info">' . __( 'This search form is not configured to search WooCommerce product post type.', 'ivory-search' ) . '</span>' ;
             }
         
         } else {
-            _e( 'Activate WooCommerce plugin to use this option.', 'ivory-search' );
+            echo  '<span class="notice-is-info">' . __( 'Activate WooCommerce plugin to use this option.', 'ivory-search' ) . '</span>' ;
         }
         
         ?>
@@ -453,7 +459,7 @@ class IS_Search_Editor
         ?></a></span></h3>
 			<div>
 				<?php 
-        $content = __( 'Make specific author posts searchable.', 'ivory-search' );
+        $content = __( 'Search posts of selected authors.', 'ivory-search' );
         IS_Help::help_info( $content );
         echo  '<div>' ;
         $author_disable = ( is_fs()->is_plan_or_trial( 'pro' ) && $this->is_premium_plugin ? '' : ' disabled ' );
@@ -483,7 +489,7 @@ class IS_Search_Editor
             }
         
         } else {
-            echo  '<label>' . esc_html__( "Search has been already limited by excluding specific authors posts in the Excludes section.", 'ivory-search' ) . '</label>' ;
+            echo  '<span class="notice-is-info">' . esc_html__( "This search form is already configured in the Excludes section to not search for specific author posts.", 'ivory-search' ) . '</span>' ;
         }
         
         if ( '' !== $author_disable ) {
@@ -491,7 +497,7 @@ class IS_Search_Editor
         }
         $checked = ( isset( $includes['search_author'] ) && $includes['search_author'] ? 1 : 0 );
         echo  '<br /><br /><p class="check-radio"><label for="' . $id . '-search_author" ><input class="_is_includes-author" type="checkbox" id="' . $id . '-search_author" name="' . $id . '[search_author]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search in author Display name and display the posts created by that author.", 'ivory-search' ) . '</label></p>' ;
+        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search author Display Name and display the posts created by that author", 'ivory-search' ) . '</label></p>' ;
         if ( $checked || isset( $includes['author'] ) && !empty($includes['author']) ) {
             echo  '<span class="ind-status ' . $id . '-author"></span>' ;
         }
@@ -513,7 +519,7 @@ class IS_Search_Editor
         ?></a></span></h3>
 			<div>
 				<?php 
-        $content = __( 'Configure options to search posts having specific post statuses.', 'ivory-search' );
+        $content = __( 'Search posts having selected post statuses.', 'ivory-search' );
         IS_Help::help_info( $content );
         echo  '<div>' ;
         
@@ -536,7 +542,7 @@ class IS_Search_Editor
                 echo  '<span class="ind-status ' . $id . '-post_status"></span>' ;
             }
         } else {
-            echo  '<label>' . esc_html__( "Search has been already limited by excluding specific posts statuses from search in the Excludes section.", 'ivory-search' ) . '</label>' ;
+            echo  '<span class="notice-is-info">' . esc_html__( "This search form is already configured in the Excludes section to not search posts of specific post statuses.", 'ivory-search' ) . '</span>' ;
         }
         
         ?>
@@ -559,14 +565,14 @@ class IS_Search_Editor
 			<div>
 				<?php 
         $ind_status = false;
-        $content = __( 'Make posts searchable that have a specific number of comments.', 'ivory-search' );
+        $content = __( 'Search posts by comments.', 'ivory-search' );
         IS_Help::help_info( $content );
         echo  '<div>' ;
         $comment_count_disable = ( is_fs()->is_plan_or_trial( 'pro' ) && $this->is_premium_plugin ? '' : ' disabled ' );
         if ( '' !== $comment_count_disable ) {
             echo  '<div class="upgrade-parent">' . IS_Admin::pro_link() ;
         }
-        echo  '<select class="_is_includes-comment_count" name="' . $id . '[comment_count][compare]" ' . $comment_count_disable . ' style="min-width: 50px;">' ;
+        echo  '<label for="' . $id . '-comment_count-compare"> ' . esc_html( __( 'Search posts having number of comments', 'ivory-search' ) ) . '</label><select class="_is_includes-comment_count" name="' . $id . '[comment_count][compare]" ' . $comment_count_disable . ' style="min-width: 50px;">' ;
         $checked = ( isset( $includes['comment_count']['compare'] ) ? htmlspecialchars_decode( $includes['comment_count']['compare'] ) : '=' );
         if ( '=' !== $checked ) {
             $ind_status = true;
@@ -582,8 +588,8 @@ class IS_Search_Editor
         foreach ( $compare as $d ) {
             echo  '<option value="' . htmlspecialchars_decode( $d ) . '" ' . selected( $d, $checked, false ) . '>' . esc_html( $d ) . '</option>' ;
         }
-        echo  '</select><label for="' . $id . '-comment_count-compare"> ' . esc_html( __( 'The search operator to compare comments count.', 'ivory-search' ) ) . '</label>' ;
-        echo  '<br /><select class="_is_includes-comment_count" name="' . $id . '[comment_count][value]" ' . $comment_count_disable . ' >' ;
+        echo  '</select>' ;
+        echo  '<select class="_is_includes-comment_count" name="' . $id . '[comment_count][value]" ' . $comment_count_disable . ' >' ;
         $checked = ( isset( $includes['comment_count']['value'] ) ? $includes['comment_count']['value'] : 'na' );
         if ( !$ind_status && 'na' !== $checked ) {
             $ind_status = true;
@@ -592,7 +598,7 @@ class IS_Search_Editor
         for ( $d = 0 ;  $d <= 999 ;  $d++ ) {
             echo  '<option value="' . $d . '" ' . selected( $d, $checked, false ) . '>' . $d . '</option>' ;
         }
-        echo  '</select><label for="' . $id . '-comment_count-value"> ' . esc_html( __( 'The amount of comments your posts has to have.', 'ivory-search' ) ) . '</label>' ;
+        echo  '</select>' ;
         if ( '' !== $comment_count_disable ) {
             echo  '</div>' ;
         }
@@ -601,7 +607,7 @@ class IS_Search_Editor
             $ind_status = true;
         }
         echo  '<br /><br /><p class="check-radio"><label for="' . $id . '-search_comment" ><input class="_is_includes-comment_count" type="checkbox" id="' . $id . '-search_comment" name="' . $id . '[search_comment]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search in approved comments content.", 'ivory-search' ) . '</label></p>' ;
+        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search approved comment content", 'ivory-search' ) . '</label></p>' ;
         if ( $ind_status ) {
             echo  '<span class="ind-status ' . $id . '-comment_count"></span>' ;
         }
@@ -624,13 +630,14 @@ class IS_Search_Editor
         ?></a></span></h3>
 			<div>
 				<?php 
-        $content = __( 'Make posts searchable that were created in the specified date range.', 'ivory-search' );
+        $content = __( 'Search posts created in the specified date range.', 'ivory-search' );
         IS_Help::help_info( $content );
         echo  '<div>' ;
         $range = array( 'after', 'before' );
         $ind_status = false;
         foreach ( $range as $value ) {
-            echo  '<div class="col-wrapper ' . $value . '"><div class="col-title">' . ucfirst( $value ) . '</div>' ;
+            $col_title = ( 'after' == $value ? __( 'From', 'ivory-search' ) : __( 'To', 'ivory-search' ) );
+            echo  '<div class="col-wrapper ' . $value . '"><div class="col-title">' . $col_title . '</div>' ;
             echo  '<select class="_is_includes-date_query" name="' . $id . '[date_query][' . $value . '][day]" >' ;
             $checked = ( isset( $includes['date_query'][$value]['day'] ) ? $includes['date_query'][$value]['day'] : 'day' );
             if ( 'day' !== $checked ) {
@@ -679,7 +686,7 @@ class IS_Search_Editor
 				<label for="<?php 
         echo  $id ;
         ?>-has_password"><?php 
-        echo  esc_html( __( 'Password', 'ivory-search' ) ) ;
+        echo  esc_html( __( 'Password Protected', 'ivory-search' ) ) ;
         ?></label>
 			<span class="actions"><span class="indicator <?php 
         echo  $id ;
@@ -690,16 +697,14 @@ class IS_Search_Editor
         ?></a></span></h3>
 			<div>
 				<?php 
-        $content = __( 'Configure options to search posts with or without password.', 'ivory-search' );
-        IS_Help::help_info( $content );
         echo  '<div>' ;
         $checked = ( isset( $includes['has_password'] ) ? $includes['has_password'] : 'null' );
         echo  '<p class="check-radio"><label for="' . $id . '-has_password" ><input class="_is_includes-has_password" type="radio" id="' . $id . '-has_password" name="' . $id . '[has_password]" value="null" ' . checked( 'null', $checked, false ) . '/>' ;
-        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search all posts with and without passwords.", 'ivory-search' ) . '</label></p>' ;
+        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search posts with or without passwords", 'ivory-search' ) . '</label></p>' ;
         echo  '<p class="check-radio"><label for="' . $id . '-has_password_1" ><input class="_is_includes-has_password" type="radio" id="' . $id . '-has_password_1" name="' . $id . '[has_password]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search only posts with passwords.", 'ivory-search' ) . '</label></p>' ;
+        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search posts with passwords", 'ivory-search' ) . '</label></p>' ;
         echo  '<p class="check-radio"><label for="' . $id . '-has_password_0" ><input class="_is_includes-has_password" type="radio" id="' . $id . '-has_password_0" name="' . $id . '[has_password]" value="0" ' . checked( 0, $checked, false ) . '/>' ;
-        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search only posts without passwords.", 'ivory-search' ) . '</label></p>' ;
+        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Search posts without passwords", 'ivory-search' ) . '</label></p>' ;
         if ( 'null' !== $checked ) {
             echo  '<span class="ind-status ' . $id . '-has_password"></span>' ;
         }
@@ -716,7 +721,7 @@ class IS_Search_Editor
 				<label for="<?php 
             echo  $id ;
             ?>-post_file_type"><?php 
-            echo  esc_html( __( 'File Types', 'ivory-search' ) ) ;
+            echo  esc_html( __( 'Attachments, Media, Files & MIME Types', 'ivory-search' ) ) ;
             ?></label>
 			<span class="actions"><span class="indicator <?php 
             echo  $id ;
@@ -727,7 +732,7 @@ class IS_Search_Editor
             ?></a></span></h3>
 			<div>
 				<?php 
-            $content = __( 'Configure the option to search files, media, attachments, images, documents or post types of specific MIME type.', 'ivory-search' );
+            $content = __( 'Search selected media, attachments, images, documents, videos, files or MIME types.', 'ivory-search' );
             IS_Help::help_info( $content );
             echo  '<div>' ;
             
@@ -751,11 +756,11 @@ class IS_Search_Editor
                     }
                 
                 } else {
-                    echo  '<label>' . esc_html__( "Search has been already limited by excluding specific File type in the Excludes section.", 'ivory-search' ) . '</label>' ;
+                    echo  '<span class="notice-is-info">' . esc_html__( "This search form is already configured in the Excludes section to not search specific file & MIME types.", 'ivory-search' ) . '</span>' ;
                 }
             
             } else {
-                _e( 'Attachment post type is not included in search.', 'ivory-search' );
+                echo  '<span class="notice-is-info">' . __( 'This search form is not configured to search Attachment post type.', 'ivory-search' ) . '</span>' ;
             }
             
             
@@ -789,7 +794,7 @@ class IS_Search_Editor
         ?>
 		<h4 class="panel-desc">
 			<?php 
-        _e( "Configure the options to exclude specific content from search.", 'ivory-search' );
+        _e( "This search form excludes the below configured content from search.", 'ivory-search' );
         ?>
 		</h4>
 		<div class="search-form-editor-box" id="<?php 
@@ -801,7 +806,7 @@ class IS_Search_Editor
 				<label for="<?php 
         echo  $id ;
         ?>-post__not_in"><?php 
-        echo  esc_html( __( 'Posts', 'ivory-search' ) ) ;
+        echo  esc_html( __( 'Posts, Pages & Custom Posts', 'ivory-search' ) ) ;
         ?></label>
 			<span class="actions"><span class="indicator <?php 
         echo  $id ;
@@ -812,17 +817,16 @@ class IS_Search_Editor
         ?></a></span></h3>
 			<div>
 				<?php 
-        $content = __( 'The posts and pages of searchable post types display here.', 'ivory-search' );
-        $content .= '<br />' . __( 'Select the posts you wish to exclude from the search.', 'ivory-search' );
-        $content .= '<br />' . __( 'Selected post types display in BOLD.', 'ivory-search' );
+        $content = __( 'Exclude selected posts from search.', 'ivory-search' );
         IS_Help::help_info( $content );
         echo  '<div>' ;
+        $post_types = array( 'post', 'page' );
+        if ( isset( $includes['post_type'] ) && !empty($includes['post_type']) && is_array( $includes['post_type'] ) ) {
+            $post_types = array_values( $includes['post_type'] );
+        }
         
         if ( !isset( $includes['post__in'] ) ) {
-            $post_types = array( 'post', 'page' );
-            if ( isset( $includes['post_type'] ) && !empty($includes['post_type']) && is_array( $includes['post_type'] ) ) {
-                $post_types = array_values( $includes['post_type'] );
-            }
+            $posts_found = false;
             foreach ( $post_types as $post_type ) {
                 $posts = get_posts( array(
                     'post_type'      => $post_type,
@@ -832,6 +836,7 @@ class IS_Search_Editor
                 ) );
                 
                 if ( !empty($posts) ) {
+                    $posts_found = true;
                     $html = '<div class="col-wrapper"><div class="col-title">';
                     $col_title = '<span>' . ucwords( $post_type ) . '</span>';
                     $temp = '';
@@ -861,9 +866,15 @@ class IS_Search_Editor
                 }
             
             }
-            echo  '<br /><label for="' . $id . '-post__not_in" style="font-size: 10px;clear:both;display:block;">' . esc_html__( "Press CTRL key & Left Mouse button to select multiple terms or deselect them.", 'ivory-search' ) . '</label>' ;
+            
+            if ( !$posts_found ) {
+                echo  '<span class="notice-is-info">' . __( 'No posts created for selected post types.', 'ivory-search' ) . '</span>' ;
+            } else {
+                echo  '<br /><label for="' . $id . '-post__not_in" style="font-size: 10px;clear:both;display:block;">' . esc_html__( "Press CTRL key & Left Mouse button to select multiple terms or deselect them.", 'ivory-search' ) . '</label>' ;
+            }
+        
         } else {
-            _e( 'Search is already limited to specific posts selected in Includes section.', 'ivory-search' );
+            echo  '<span class="notice-is-info">' . __( 'This search form is already configured in the Includes section to search specific posts.', 'ivory-search' ) . '</span>' ;
         }
         
         ?>
@@ -873,7 +884,7 @@ class IS_Search_Editor
 				<label for="<?php 
         echo  $id ;
         ?>-tax_query"><?php 
-        esc_html_e( 'Taxonomy Terms', 'ivory-search' );
+        esc_html_e( 'Category & Taxonomy Terms', 'ivory-search' );
         ?></label>
 			<span class="actions"><span class="indicator <?php 
         echo  $id ;
@@ -884,9 +895,7 @@ class IS_Search_Editor
         ?></a></span></h3>
 			<div>
 				<?php 
-        $content = __( 'The taxonomies and terms attached to searchable post types display here.', 'ivory-search' );
-        $content .= '<br />' . __( 'Exclude posts from search results that have specific terms', 'ivory-search' );
-        $content .= '<br />' . __( 'Selected terms taxonomy title display in BOLD.', 'ivory-search' );
+        $content = __( 'Exclude posts of selected categories, taxonomies & terms from search.', 'ivory-search' );
         IS_Help::help_info( $content );
         echo  '<div>' ;
         $tax_objs = get_object_taxonomies( $post_types, 'objects' );
@@ -918,7 +927,7 @@ class IS_Search_Editor
                 echo  '<span class="ind-status ' . $id . '-tax_query"></span>' ;
             }
         } else {
-            _e( 'No taxonomies registered for selected post types.', 'ivory-search' );
+            echo  '<span class="notice-is-info">' . __( 'No taxonomies registered for selected post types.', 'ivory-search' ) . '</span>' ;
         }
         
         ?>
@@ -929,7 +938,7 @@ class IS_Search_Editor
 				<label for="<?php 
         echo  $id ;
         ?>-custom_field"><?php 
-        echo  esc_html( __( 'Custom Fields', 'ivory-search' ) ) ;
+        echo  esc_html( __( 'Custom Fields & Metadata', 'ivory-search' ) ) ;
         ?></label>
 			<span class="actions"><span class="indicator <?php 
         echo  $id ;
@@ -940,14 +949,10 @@ class IS_Search_Editor
         ?></a></span></h3>
 			<div>
 				<?php 
-        $content = __( 'Exclude posts from the search having selected custom fields.', 'ivory-search' );
+        $content = __( 'Exclude posts having selected custom fields from search.', 'ivory-search' );
         IS_Help::help_info( $content );
         echo  '<div>' ;
-        $args = array( 'post', 'page' );
-        if ( isset( $excludes['post_type'] ) && !empty($excludes['post_type']) && is_array( $excludes['post_type'] ) ) {
-            $args = array_values( $excludes['post_type'] );
-        }
-        $meta_keys = $this->is_meta_keys( $args );
+        $meta_keys = $this->is_meta_keys( $post_types );
         
         if ( !empty($meta_keys) ) {
             $custom_field_disable = ( is_fs()->is_plan_or_trial( 'pro' ) && $this->is_premium_plugin ? '' : ' disabled ' );
@@ -960,6 +965,8 @@ class IS_Search_Editor
             echo  '</select>' ;
             echo  IS_Admin::pro_link() ;
             echo  '<br /><br /><label for="' . $id . '-custom_field" style="font-size: 10px;clear:both;display:block;">' . esc_html__( "Press CTRL key & Left Mouse button to select multiple terms or deselect them.", 'ivory-search' ) . '</label>' ;
+        } else {
+            echo  '<span class="notice-is-info">' . __( 'No custom fields created for selected post types.', 'ivory-search' ) . '</span>' ;
         }
         
         
@@ -990,7 +997,7 @@ class IS_Search_Editor
         ?></a></span></h3>
 			<div>
 				<?php 
-        $content = __( 'Exclude specific WooCommerce products from the search.', 'ivory-search' );
+        $content = __( 'Exclude selected WooCommerce products from search.', 'ivory-search' );
         IS_Help::help_info( $content );
         echo  '<div>' ;
         
@@ -1007,14 +1014,14 @@ class IS_Search_Editor
                     echo  '<span class="ind-status ' . $id . '-woocommerce"></span>' ;
                 }
                 echo  '<p class="check-radio"><label for="' . $id . '-outofstock" ><input class="_is_excludes-woocommerce" type="checkbox" ' . $outofstock_disable . ' id="' . $id . '-outofstock" name="' . $id . '[woo][outofstock]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-                echo  '<span class="toggle-check-text"></span>' . esc_html__( "Exclude 'out of stock' WooCommerce products.", 'ivory-search' ) . '</label></p>' ;
+                echo  '<span class="toggle-check-text"></span>' . esc_html__( "Exclude 'Out of Stock' products", 'ivory-search' ) . '</label></p>' ;
                 echo  IS_Admin::pro_link( 'pro_plus' ) ;
             } else {
-                _e( 'WooCommerce product post type is not included in search.', 'ivory-search' );
+                echo  '<span class="notice-is-info">' . __( 'This search form is not configured to search WooCommerce product post type.', 'ivory-search' ) . '</span>' ;
             }
         
         } else {
-            _e( 'Activate WooCommerce plugin to use this option.', 'ivory-search' );
+            echo  '<span class="notice-is-info">' . __( 'Activate WooCommerce plugin to use this option.', 'ivory-search' ) . '</span>' ;
         }
         
         ?>
@@ -1036,7 +1043,7 @@ class IS_Search_Editor
         ?></a></span></h3>
 			<div>
 				<?php 
-        $content = __( 'Exclude posts from the search created by selected authors.', 'ivory-search' );
+        $content = __( 'Exclude posts created by selected authors from search.', 'ivory-search' );
         IS_Help::help_info( $content );
         echo  '<div>' ;
         
@@ -1069,7 +1076,7 @@ class IS_Search_Editor
             }
         
         } else {
-            echo  '<label>' . esc_html__( "Search has been already limited to posts created by specific authors in the Includes section.", 'ivory-search' ) . '</label>' ;
+            echo  '<span class="notice-is-info">' . esc_html__( "This search form is already configured in the Includes section to search posts created by specific authors.", 'ivory-search' ) . '</span>' ;
         }
         
         ?>
@@ -1091,7 +1098,7 @@ class IS_Search_Editor
         ?></a></span></h3>
 			<div>
 				<?php 
-        $content = __( 'Exclude posts from the search having selected post statuses.', 'ivory-search' );
+        $content = __( 'Exclude posts having selected post statuses from search.', 'ivory-search' );
         IS_Help::help_info( $content );
         echo  '<div>' ;
         
@@ -1114,7 +1121,7 @@ class IS_Search_Editor
             }
         
         } else {
-            echo  '<label>' . esc_html__( "Search has been already limited to posts statuses set in the Includes section.", 'ivory-search' ) . '</label>' ;
+            echo  '<span class="notice-is-info">' . esc_html__( "This search form is already configured in the Includes section to search posts of specific post statuses.", 'ivory-search' ) . '</span>' ;
         }
         
         $checked = ( isset( $excludes['ignore_sticky_posts'] ) && $excludes['ignore_sticky_posts'] ? 1 : 0 );
@@ -1122,7 +1129,7 @@ class IS_Search_Editor
             echo  '<span class="ind-status ' . $id . '-post_status"></span>' ;
         }
         echo  '<br /><br /><p class="check-radio"><label for="' . $id . '-ignore_sticky_posts" ><input class="_is_excludes-post_status" type="checkbox" id="' . $id . '-ignore_sticky_posts" name="' . $id . '[ignore_sticky_posts]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Exclude sticky posts from search.", 'ivory-search' ) . '</label></p>' ;
+        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Exclude sticky posts from search", 'ivory-search' ) . '</label></p>' ;
         ?>
 			</div></div>
 
@@ -1136,7 +1143,7 @@ class IS_Search_Editor
 				<label for="<?php 
             echo  $id ;
             ?>-post_file_type"><?php 
-            echo  esc_html( __( 'File Types', 'ivory-search' ) ) ;
+            echo  esc_html( __( 'Attachments, Media, Files & MIME Types', 'ivory-search' ) ) ;
             ?></label>
 			<span class="actions"><span class="indicator <?php 
             echo  $id ;
@@ -1147,7 +1154,7 @@ class IS_Search_Editor
             ?></a></span></h3>
 			<div>
 				<?php 
-            $content = __( 'Exclude posts specially media attachment posts from the search having selected file types.', 'ivory-search' );
+            $content = __( 'Exclude selected media, attachments, images, documents, videos, files or MIME types from search.', 'ivory-search' );
             IS_Help::help_info( $content );
             echo  '<div>' ;
             
@@ -1171,11 +1178,11 @@ class IS_Search_Editor
                     }
                 
                 } else {
-                    echo  '<label>' . esc_html__( "Search has been already limited to specific File type set in the Includes section.", 'ivory-search' ) . '</label>' ;
+                    echo  '<span class="notice-is-info">' . esc_html__( "This search form is already configured in the Includes section to search specific Attachments, Media or Files.", 'ivory-search' ) . '</span>' ;
                 }
             
             } else {
-                _e( 'Attachment post type is not included in search.', 'ivory-search' );
+                echo  '<span class="notice-is-info">' . __( 'This search form is not configured to search Attachment post type.', 'ivory-search' ) . '</span>' ;
             }
             
             
@@ -1206,7 +1213,7 @@ class IS_Search_Editor
         ?>
 		<h4 class="panel-desc">
 			<?php 
-        _e( "Configure the options here to control search of this search form.", 'ivory-search' );
+        _e( "Configure below options to manage functionality of this search form.", 'ivory-search' );
         ?>
 		</h4>
 		<div class="search-form-editor-box" id="<?php 
@@ -1227,15 +1234,18 @@ class IS_Search_Editor
         ?></a><a class="collapse" href="#" style="display:none;"><?php 
         esc_html_e( 'Collapse All', 'ivory-search' );
         ?></a></span></h3>
-			<div><div>
-				<?php 
+			<div>
+			<?php 
+        $content = __( 'Display selected number of posts on search results page.', 'ivory-search' );
+        IS_Help::help_info( $content );
+        echo  '<div>' ;
         echo  '<select class="_is_settings-posts_per_page" name="' . $id . '[posts_per_page]" >' ;
         $default_per_page = get_option( 'posts_per_page', 10 );
         $checked = ( isset( $settings['posts_per_page'] ) ? $settings['posts_per_page'] : $default_per_page );
         for ( $d = 1 ;  $d <= 1000 ;  $d++ ) {
             echo  '<option value="' . $d . '" ' . selected( $d, $checked, false ) . '>' . $d . '</option>' ;
         }
-        echo  '</select><label for="' . $id . '-posts_per_page"> ' . esc_html( __( 'Number of posts to display on search results page.', 'ivory-search' ) ) . '</label>' ;
+        echo  '</select>' ;
         if ( $checked !== $default_per_page ) {
             echo  '<span class="ind-status ' . $id . '-posts_per_page"></span>' ;
         }
@@ -1247,7 +1257,7 @@ class IS_Search_Editor
 				<label for="<?php 
         echo  $id ;
         ?>-order"><?php 
-        echo  esc_html( __( 'Order By', 'ivory-search' ) ) ;
+        echo  esc_html( __( 'Order Search Results', 'ivory-search' ) ) ;
         ?></label>
 			<span class="actions"><span class="indicator <?php 
         echo  $id ;
@@ -1256,8 +1266,10 @@ class IS_Search_Editor
         ?></a><a class="collapse" href="#" style="display:none;"><?php 
         esc_html_e( 'Collapse All', 'ivory-search' );
         ?></a></span></h3>
-			<div><div>
-				<?php 
+			<div><?php 
+        $content = __( 'Display posts on search results page ordered by selected options.', 'ivory-search' );
+        IS_Help::help_info( $content );
+        echo  '<div>' ;
         $ind_status = false;
         $orderby_disable = ( is_fs()->is_plan_or_trial( 'pro' ) && $this->is_premium_plugin ? '' : ' disabled ' );
         echo  '<select class="_is_settings-order" name="' . $id . '[orderby]" ' . $orderby_disable . ' >' ;
@@ -1310,7 +1322,7 @@ class IS_Search_Editor
 				<label for="<?php 
         echo  $id ;
         ?>-highlight_terms"><?php 
-        echo  esc_html( __( 'Highlight Terms', 'ivory-search' ) ) ;
+        echo  esc_html( __( 'Highlight Search Terms', 'ivory-search' ) ) ;
         ?></label>
 			<span class="actions"><span class="indicator <?php 
         echo  $id ;
@@ -1327,13 +1339,13 @@ class IS_Search_Editor
             $ind_status = true;
         }
         echo  '<p class="check-radio"><label for="' . $id . '-highlight_terms" ><input class="_is_settings-highlight_terms" type="checkbox" id="' . $id . '-highlight_terms" name="' . $id . '[highlight_terms]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Highlight searched terms on search results page.", 'ivory-search' ) . '</label></p>' ;
+        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Highlight searched terms on search results page", 'ivory-search' ) . '</label></p>' ;
         $color = ( isset( $settings['highlight_color'] ) ? $settings['highlight_color'] : '#FFFFB9' );
         if ( !$ind_status && '#FFFFB9' !== $color ) {
             $ind_status = true;
         }
-        echo  '<br /><br /><input class="_is_settings-highlight_terms" size="10" type="text" id="' . $id . '-highlight_color" name="' . $id . '[highlight_color]" value="' . $color . '" />' ;
-        echo  '<label for="' . $id . '-highlight_color" > ' . esc_html__( "Set highlight color.", 'ivory-search' ) . '</label>' ;
+        echo  '<br /><input style="width: 80px;" class="_is_settings-highlight_terms" size="5" type="text" id="' . $id . '-highlight_color" name="' . $id . '[highlight_color]" value="' . $color . '" />' ;
+        echo  '<label for="' . $id . '-highlight_color" > ' . esc_html__( "Set highlight color in Hex format", 'ivory-search' ) . '</label>' ;
         if ( $ind_status ) {
             echo  '<span class="ind-status ' . $id . '-highlight_terms"></span>' ;
         }
@@ -1345,7 +1357,7 @@ class IS_Search_Editor
 				<label for="<?php 
         echo  $id ;
         ?>-term_rel"><?php 
-        echo  esc_html( __( 'Search Terms Relation', 'ivory-search' ) ) ;
+        echo  esc_html( __( 'Search All Or Any Search Terms', 'ivory-search' ) ) ;
         ?></label>
 			<span class="actions"><span class="indicator <?php 
         echo  $id ;
@@ -1354,14 +1366,17 @@ class IS_Search_Editor
         ?></a><a class="collapse" href="#" style="display:none;"><?php 
         esc_html_e( 'Collapse All', 'ivory-search' );
         ?></a></span></h3>
-			<div><div>
+			<div>
 			<?php 
+        $content = __( 'Select whether to search posts having all or any of the words being searched.', 'ivory-search' );
+        IS_Help::help_info( $content );
+        echo  '<div>' ;
         $term_rel_disable = ( is_fs()->is_plan_or_trial( 'pro' ) && $this->is_premium_plugin ? '' : ' disabled ' );
         $checked = ( isset( $settings['term_rel'] ) && "OR" === $settings['term_rel'] ? "OR" : "AND" );
         echo  '<p class="check-radio"><label for="' . $id . '-term_rel_or" ><input class="_is_settings-term_rel" type="radio" ' . $term_rel_disable . ' id="' . $id . '-term_rel_or" name="' . $id . '[term_rel]" value="OR" ' . checked( 'OR', $checked, false ) . '/>' ;
-        echo  '<span class="toggle-check-text"></span>' . esc_html__( "OR - Display content having any of the searched terms.", 'ivory-search' ) . '</label>' . IS_Admin::pro_link() . '</p>' ;
+        echo  '<span class="toggle-check-text"></span>' . esc_html__( "OR - Display content having any of the search terms", 'ivory-search' ) . '</label>' . IS_Admin::pro_link() . '</p>' ;
         echo  '<p class="check-radio"><label for="' . $id . '-term_rel_and" ><input class="_is_settings-term_rel" type="radio" ' . $term_rel_disable . ' id="' . $id . '-term_rel_and" name="' . $id . '[term_rel]" value="AND" ' . checked( 'AND', $checked, false ) . '/>' ;
-        echo  '<span class="toggle-check-text"></span>' . esc_html__( "AND - Display content having all the searched terms.", 'ivory-search' ) . '</label></p>' ;
+        echo  '<span class="toggle-check-text"></span>' . esc_html__( "AND - Display content having all the search terms", 'ivory-search' ) . '</label></p>' ;
         if ( "AND" !== $checked ) {
             echo  '<span class="ind-status ' . $id . '-term_rel"></span>' ;
         }
@@ -1382,13 +1397,15 @@ class IS_Search_Editor
         ?></a><a class="collapse" href="#" style="display:none;"><?php 
         esc_html_e( 'Collapse All', 'ivory-search' );
         ?></a></span></h3>
-			<div><div>
-			<?php 
+			<div><?php 
+        $content = __( 'Select whether to search posts having whole or partial word being searched.', 'ivory-search' );
+        IS_Help::help_info( $content );
+        echo  '<div>' ;
         $checked = ( isset( $settings['fuzzy_match'] ) ? $settings['fuzzy_match'] : '2' );
         echo  '<p class="check-radio"><label for="' . $id . '-whole" ><input class="_is_settings-fuzzy_match" type="radio" id="' . $id . '-whole" name="' . $id . '[fuzzy_match]" value="1" ' . checked( '1', $checked, false ) . '/>' ;
-        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Whole - Search posts that include the whole search term.", 'ivory-search' ) . '</label></p>' ;
+        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Whole - Search posts that include the whole search term", 'ivory-search' ) . '</label></p>' ;
         echo  '<p class="check-radio"><label for="' . $id . '-partial" ><input class="_is_settings-fuzzy_match" type="radio" id="' . $id . '-partial" name="' . $id . '[fuzzy_match]" value="2" ' . checked( '2', $checked, false ) . '/>' ;
-        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Partial - Also search words in the posts that begins or ends with the search term.", 'ivory-search' ) . '</label></p>' ;
+        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Partial - Also search words in the posts that begins or ends with the search term", 'ivory-search' ) . '</label></p>' ;
         if ( "2" !== $checked ) {
             echo  '<span class="ind-status ' . $id . '-fuzzy_match"></span>' ;
         }
@@ -1411,17 +1428,16 @@ class IS_Search_Editor
         ?></a></span></h3>
 			<div>
 			<?php 
-        $content = __( 'Searches the base word of a searched keyword', 'ivory-search' );
+        $content = __( 'Select whether to search the base word of a searched keyword.', 'ivory-search' );
         $content .= '<p>' . __( 'For Example: If you search "doing" then it also searches base word of "doing" that is "do" in the specified post types.', 'ivory-search' ) . '</p>';
-        $content .= '<p>' . __( 'If you want to search whole exact searched term then do not use this options and in this case it is not recommended to use when Fuzzy Matching option is set to Whole.', 'ivory-search' ) . '</p>';
+        $content .= '<p>' . __( 'Not recommended to use when Fuzzy Matching option is set to Whole.', 'ivory-search' ) . '</p>';
         IS_Help::help_info( $content );
         echo  '<div>' ;
         $stem_disable = ( is_fs()->is_plan_or_trial( 'pro_plus' ) && $this->is_premium_plugin ? '' : ' disabled ' );
         $checked = ( isset( $settings['keyword_stem'] ) && $settings['keyword_stem'] ? 1 : 0 );
         echo  '<p class="check-radio"><label for="' . $id . '-keyword_stem" ><input class="_is_settings-keyword_stem" type="checkbox" id="' . $id . '-keyword_stem" ' . $stem_disable . ' name="' . $id . '[keyword_stem]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Also search base word of searched keyword.", 'ivory-search' ) . '</label></p>' ;
+        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Also search base word of searched keyword", 'ivory-search' ) . '</label></p>' ;
         echo  IS_Admin::pro_link( 'pro_plus' ) ;
-        echo  '<br /><label for="' . $id . '-keyword_stem" style="font-size: 10px;clear:both;display:block;">' . esc_html__( "Not recommended to use when Fuzzy Matching option is set to Whole.", 'ivory-search' ) . '</label>' ;
         if ( $checked ) {
             echo  '<span class="ind-status ' . $id . '-keyword_stem"></span>' ;
         }
@@ -1446,7 +1462,7 @@ class IS_Search_Editor
 			<?php 
         $checked = ( isset( $settings['move_sticky_posts'] ) && $settings['move_sticky_posts'] ? 1 : 0 );
         echo  '<p class="check-radio"><label for="' . $id . '-move_sticky_posts" ><input class="_is_settings-move_sticky_posts" type="checkbox" id="' . $id . '-move_sticky_posts" name="' . $id . '[move_sticky_posts]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Move sticky posts to the start of the search results page.", 'ivory-search' ) . '</label></p>' ;
+        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Display sticky posts to the start of the search results page", 'ivory-search' ) . '</label></p>' ;
         if ( $checked ) {
             echo  '<span class="ind-status ' . $id . '-move_sticky_posts"></span>' ;
         }
@@ -1458,7 +1474,7 @@ class IS_Search_Editor
 				<label for="<?php 
         echo  $id ;
         ?>-empty_search"><?php 
-        echo  esc_html( __( 'Empty Search', 'ivory-search' ) ) ;
+        echo  esc_html( __( 'Empty Search Query', 'ivory-search' ) ) ;
         ?></label>
 			<span class="actions"><span class="indicator <?php 
         echo  $id ;
@@ -1467,11 +1483,13 @@ class IS_Search_Editor
         ?></a><a class="collapse" href="#" style="display:none;"><?php 
         esc_html_e( 'Collapse All', 'ivory-search' );
         ?></a></span></h3>
-			<div><div>
-			<?php 
+			<div><?php 
+        $content = __( 'Select whether to display an error when user perform search without any search word.', 'ivory-search' );
+        IS_Help::help_info( $content );
+        echo  '<div>' ;
         $checked = ( isset( $settings['empty_search'] ) && $settings['empty_search'] ? 1 : 0 );
         echo  '<p class="check-radio"><label for="' . $id . '-empty_search" ><input class="_is_settings-empty_search" type="checkbox" id="' . $id . '-empty_search" name="' . $id . '[empty_search]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Display an error for empty search query.", 'ivory-search' ) . '</label></p>' ;
+        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Display an error for empty search query", 'ivory-search' ) . '</label></p>' ;
         if ( $checked ) {
             echo  '<span class="ind-status ' . $id . '-empty_search"></span>' ;
         }
@@ -1496,7 +1514,7 @@ class IS_Search_Editor
 			<?php 
         $checked = ( isset( $settings['exclude_from_search'] ) && $settings['exclude_from_search'] ? 1 : 0 );
         echo  '<p class="check-radio"><label for="' . $id . '-exclude_from_search" ><input class="_is_settings-exclude_from_search" type="checkbox" id="' . $id . '-exclude_from_search" name="' . $id . '[exclude_from_search]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Do not search post types which are excluded from search.", 'ivory-search' ) . '</label></p>' ;
+        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Do not search post types which are excluded from search", 'ivory-search' ) . '</label></p>' ;
         if ( $checked ) {
             echo  '<span class="ind-status ' . $id . '-exclude_from_search"></span>' ;
         }
@@ -1508,7 +1526,7 @@ class IS_Search_Editor
 				<label for="<?php 
         echo  $id ;
         ?>-demo"><?php 
-        echo  esc_html( __( 'Demo', 'ivory-search' ) ) ;
+        echo  esc_html( __( 'Demo Search', 'ivory-search' ) ) ;
         ?></label>
 			<span class="actions"><span class="indicator <?php 
         echo  $id ;
@@ -1521,7 +1539,7 @@ class IS_Search_Editor
 			<?php 
         $checked = ( isset( $settings['demo'] ) && $settings['demo'] ? 1 : 0 );
         echo  '<p class="check-radio"><label for="' . $id . '-demo" ><input class="_is_settings-demo" type="checkbox" id="' . $id . '-demo" name="' . $id . '[demo]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Display search form only for site administrator.", 'ivory-search' ) . '</label></p>' ;
+        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Display search form only for site administrator", 'ivory-search' ) . '</label></p>' ;
         if ( $checked ) {
             echo  '<span class="ind-status ' . $id . '-demo"></span>' ;
         }
@@ -1533,7 +1551,7 @@ class IS_Search_Editor
 				<label for="<?php 
         echo  $id ;
         ?>-disable"><?php 
-        echo  esc_html( __( 'Disable', 'ivory-search' ) ) ;
+        echo  esc_html( __( 'Disable Search', 'ivory-search' ) ) ;
         ?></label>
 			<span class="actions"><span class="indicator <?php 
         echo  $id ;
@@ -1546,7 +1564,7 @@ class IS_Search_Editor
 			<?php 
         $checked = ( isset( $settings['disable'] ) && $settings['disable'] ? 1 : 0 );
         echo  '<p class="check-radio"><label for="' . $id . '-disable" ><input class="_is_settings-disable" type="checkbox" id="' . $id . '-disable" name="' . $id . '[disable]" value="1" ' . checked( 1, $checked, false ) . '/>' ;
-        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Disable this search form.", 'ivory-search' ) . '</label></p>' ;
+        echo  '<span class="toggle-check-text"></span>' . esc_html__( "Disable this search form", 'ivory-search' ) . '</label></p>' ;
         if ( $checked ) {
             echo  '<span class="ind-status ' . $id . '-disable"></span>' ;
         }

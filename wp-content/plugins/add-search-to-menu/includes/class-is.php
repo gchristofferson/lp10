@@ -113,6 +113,7 @@ class IS_Loader {
 		add_action( 'admin_init', array( $admin, 'admin_init' ) );
 		add_action( 'is_admin_notices', array( $admin, 'admin_updated_message' ) );
 		add_filter( 'map_meta_cap', array( $admin, 'map_meta_cap' ), 10, 4 );
+		add_filter( 'admin_footer_text', array( $admin, 'admin_footer_text' ), 1 );
 	}
 
 	/**
@@ -134,6 +135,8 @@ class IS_Loader {
 
 		add_action( 'wp_enqueue_scripts', array( $public, 'wp_enqueue_scripts' ) );
 		add_filter( 'query_vars', array( $public, 'query_vars' ) );
+
+		add_filter( 'body_class', array( $public, 'is_body_classes' ) );
 
 		$header_menu_search = isset( $this->opt['add_search_to_menu_display_in_header'] ) ? $this->opt['add_search_to_menu_display_in_header'] : 0;
 		$header_menu_search = isset( $this->opt['header_menu_search'] ) ? $this->opt['header_menu_search'] : $header_menu_search;

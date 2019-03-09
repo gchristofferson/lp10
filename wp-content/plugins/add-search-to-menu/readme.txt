@@ -5,7 +5,7 @@ Tags: search, woocommerce search, image search, search shortcode,  exclude from 
 Requires at least: 3.9
 Tested up to: 5.0
 Requires PHP: 5.2.4
-Stable tag: 4.1.7
+Stable tag: 4.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -165,18 +165,20 @@ Yes we do. We try our best to help free users with customisation requests and we
 
 == Screenshots ==
 
-1. Includes section controls what content on the site to make searchable for the search form.
-2. Excludes section controls what content on the site to exclude from search for the search form.
-3. Options section customizes overall behavior of the search form.
-4. Ivory Search plugin options in the admin menu.
-5. Menu Search section provides options to customize the behavior of search form added in the site navigation menu.
-6. Settings section provides options to configure sitewide search functionality that affects all search forms.
-7. Displays default search form in the menu.
-8. Displays dropdown search form in the menu.
-9. Displays sliding search form in the menu.
-10. Displays full width search form in the menu.
+1. Default Search Form
+2. Dropdown Search Form
+3. Sliding Search Form
+4. Full Width Search Form
+5. Popup Search Form
+6. Search Forms
+7. Search Form
+8. Plugin Settings
 
 == Changelog ==
+
+= 4.2 =
+* Enhanced plugin admin settings user interface.
+* Developed functionality to search posts and pages along with media.
 
 = 4.1.7 =
 * Fixed - Post title and content options saving issue.

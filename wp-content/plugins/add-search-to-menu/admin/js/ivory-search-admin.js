@@ -154,6 +154,30 @@
 				$( '#publishing-action .spinner' ).addClass( 'is-active' );
 			}
 		} );
+
+		// Tooltip only Text
+		$('#search-body #titlewrap').hover(function(){
+			if($(this).find("#title[disabled]").length){
+			// Hover over code
+			var title = $(this).find("#title[disabled]").attr('title');
+			$(this).find("#title[disabled]").data('tipText', title).removeAttr('title');
+			$('<p class="title_tooltip"></p>')
+			.text(title)
+			.appendTo('body')
+			.fadeIn('slow');
+			}
+		}, function() {
+			// Hover out code
+			$(this).find("#title[disabled]").attr('title', $(this).find("#title[disabled]").data('tipText'));
+			$('.title_tooltip').remove();
+		}).mousemove(function(e) {
+			var mousex = e.pageX + 20; //Get X coordinates
+			var mousey = e.pageY - 40; //Get Y coordinates
+			$('.title_tooltip')
+			.css({ top: mousey, left: mousex })
+		});
+
+
 	} );
 
 	ivory_search.titleHint = function() {

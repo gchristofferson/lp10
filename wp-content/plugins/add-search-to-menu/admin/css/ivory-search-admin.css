@@ -2,6 +2,19 @@ br {
 	clear: both;
 }
 
+.title_tooltip {
+	border: 1px solid #f7e58f;
+	color: #444;
+	background: #ffffdf;
+	box-shadow: 0 2px 3px #999;
+	position: absolute;
+	padding: 5px;
+	text-align: left;
+	border-radius: 5px;
+	 -moz-border-radius: 5px;
+	 -webkit-border-radius: 5px;
+}
+
 #search-form-editor textarea,
 #search-form-editor input[type=text] {
 	width: 99%;
@@ -26,7 +39,7 @@ br {
 	position: relative;
 	text-transform: uppercase;
 	background: #CCC;
-	padding: 3px 9px 3px 18px;
+	padding: 3px 6px 1px 16px;
 	border-radius: 15px;
 	height: 12px;
 	width: 8px;
@@ -43,11 +56,11 @@ br {
 	content: ' ';
 	display: block;
 	background: #FFF;
-	width: 12px;
-	height: 12px;
+	width: 10px;
+	height: 10px;
 	border-radius: 15px;
 	position: absolute;
-	left: 3px;
+	left: 4px;
 	top: 3px;
 	transition: left 0.15s, margin-left 0.15s;
 }
@@ -58,9 +71,9 @@ br {
 }
 
 #search-form-editor input:checked ~ .toggle-check-text {
-	background: #8ad869;
-	padding-left: 10px;
-	padding-right: 17px;
+	background: #8daebf;
+	padding-left: 6px;
+	padding-right: 16px;
 }
 
 #search-form-editor input:checked ~ .toggle-check-text:before {
@@ -69,7 +82,7 @@ br {
 
 #search-form-editor input:checked ~ .toggle-check-text:after {
 	left: 100%;
-	margin-left: -16px;
+	margin-left: -14px;
 }
 
 #submitdiv.searchbox {
@@ -86,12 +99,9 @@ br {
 	text-align: center;
 }
 
-#search-body input.button-primary,
 #submitdiv.searchbox input[type="submit"] {
-	background: #00C366;
-	border: 0;
 	color: #FFF;
-	padding: 4px 18px;
+	padding: 4px 8px;
 	vertical-align: middle;
 	box-shadow: none;
 	text-shadow: none;
@@ -107,16 +117,22 @@ br {
 	color: #f1f1f1;
 }
 
-#submitdiv.searchbox  input.delete {
-	background: #b74c28;
-}
-
-#submitdiv.searchbox input.copy.button {
-	background: #0073aa;
-}
-
+#submitdiv.searchbox  input.delete,
+#submitdiv.searchbox input.copy.button,
 #submitdiv.searchbox input.reset.button {
-	background: #009688;
+	background: #f7f7f7;
+	color: #555;
+	box-shadow: 0 1px 0 #ccc;
+	border: 1px solid #ccc;
+	border-radius: 3px
+}
+
+#submitdiv.searchbox  input.delete:hover,
+#submitdiv.searchbox input.copy.button:hover,
+#submitdiv.searchbox input.reset.button:hover {
+	background: #fafafa;
+	border-color: #999;
+	color: #23282d;
 }
 
 #submitdiv.searchbox #delete-action {
@@ -124,9 +140,14 @@ br {
 	margin-top: 10px;
 }
 
+#informationdiv.searchbox .inside {
+	background: #fff;
+}
+
 #searchtbox-container-1 input.button-primary {
 	width: auto;
 	margin-top: 15px;
+	min-width: 100px;
 }
 
 #minor-publishing-actions {
@@ -162,19 +183,12 @@ br {
 }
 
 span.shortcode > input {
-	background: inherit;
-	color: inherit;
+	background: #fff;
 	font-size: 12px;
 	border: none;
 	box-shadow: none;
 	padding: 4px 8px;
 	margin: 0;
-}
-
-.ivory-search_page_ivory-search-settings #wpcontent,
-.toplevel_page_ivory-search #wpcontent,
-.ivory-search_page_ivory-search-new #wpcontent {
-	background: #FFF;
 }
 
 .is-search-image {
@@ -199,17 +213,6 @@ span.shortcode > input {
 
 h1.wp-heading-inline {
 	font-size: 18px;
-}
-
-#search-body #titlediv #title {
-	background: #f1f1f1;
-	box-shadow: none;
-	border: 0;
-}
-
-#search-body #titlediv #title:disabled {
-	background: #1e8cbe;
-	color: #FFFF;
 }
 
 #post-body-content {
@@ -240,6 +243,7 @@ h1.wp-heading-inline {
 	font-size: 15px;
 }
 
+h4.panel-desc::before,
 #informationdiv h3::before {
 	font-family: dashicons;
 	content: "\f534";
@@ -326,16 +330,18 @@ h1.wp-heading-inline {
 }
 
 .is-help {
+	color: #72777c;
 	display: block;
-	margin-bottom: 15px;
 	font-size: 13px;
 	position: relative;
+	padding: 5px;
+	border: 1px solid #d4eff5;
+	border-radius: 3px;
+	background: #f2f6f9;
 }
 
 .is-help .dashicons-warning {
-	position: absolute;
-	top: 0;
-	left: 0;
+	float: left;
 }
 
 .is-help .is-info {
@@ -368,7 +374,7 @@ h1.wp-heading-inline {
 }
 
 #search-form-editor-tabs li {
-	border: 1px solid #e6f1f7;
+	border: 1px solid #ddd;
 	border-radius: 3px;
 	display: block;
 	padding: 0;
@@ -376,34 +382,32 @@ h1.wp-heading-inline {
 	outline: 0;
 }
 
-#search-form-editor-tabs li:hover,
-#search-form-editor-tabs li.active,
-#search-form-editor-tabs li.active:hover {
-	background-color: #3985C4;
+#search-form-editor-tabs li:hover a,
+#search-form-editor-tabs li.active a,
+#search-form-editor-tabs li.active:hover a {
+	background-color: #f3f3f5;
+	color: #0073aa;
 }
 
 #search-form-editor-tabs li a {
+	background: #fff;
+	border-radius: 3px;
 	box-shadow: none;
 	padding: 6px 10px;
 	font-size: 14px;
 	font-weight: normal;
 	line-height: 30px;
 	outline: 0;
-	color: #0073aa;
+	color: #555d66;
 	text-decoration: none;
 	display: block;
-}
-
-#search-form-editor-tabs li:hover a,
-#search-form-editor-tabs li.active a {
-	color: #FFF;
 }
 
 #search-form-editor-tabs li a::after {
 	font-family: dashicons;
 	content: "\f345";
 	display: inline-block;
-	color: #000;
+	color: #a0a5aa;
 	font-size: 20px;
 	position: absolute;
 	right: 5px;
@@ -411,7 +415,7 @@ h1.wp-heading-inline {
 
 #search-form-editor-tabs li.active a::after,
 #search-form-editor-tabs li:hover a::after {
-	color: #FFF;
+	color: #0073aa;
 }
 
 #search-form-editor-tabs li a span.dashicons {
@@ -444,17 +448,14 @@ h1.wp-heading-inline {
 
 .search-form-editor-box {
 	background-color: #f1f1f1;
-	padding: 16px;
 	width: auto;
 }
 
 h4.panel-desc {
 	margin-top: 0;
-	background: #edf8fb;
-	padding: 5px 15px;
-	color: #006799;
+	padding: 5px;
 	font-weight: 400;
-	border: 1px solid #cee2e8;
+	border: 1px solid #e5e5e5;
 	border-radius: 3px;
 }
 
@@ -465,12 +466,14 @@ h4.panel-desc {
 #search-body .form-table h3 {
 	clear: both;
 	cursor: pointer;
-	background-color: #1390cc;
-	color: #FFF;
+	background-color: #fff;
+	color: #23282d;
+	outline: 0;
 	padding: 8px 10px;
 	font-size: 1em;
 	border-radius: 3px 3px 0 0;
-	margin: 1.5em 0 0;
+	margin: 0.5em 0 0;
+	border: 1px solid #e5e5e5;
 }
 
 #search-body .search-form-editor-panel {
@@ -479,13 +482,36 @@ h4.panel-desc {
 	color: #444;
 }
 
+#search-body #titlediv .inside .description {
+	margin-top: 15px;
+}
+
+#search-body #title-prompt-text {
+	font-size: 1.2em;
+	padding: 4px 10px;
+}
+
+#search-body #title {
+	font-size: 1.2em;
+}
+
+#search-body .shortcode {
+	display: block;
+	margin: 2px 0;
+	background-color: #fff;
+}
+
+#is-shortcode {
+	width: 100%;
+}
+
 .form-table h3 .actions {
 	float: right;
 }
 
 .form-table h3 .actions .indicator {
 	height: 10px;
-	background-color: #0ede7b;
+	background-color: #8daebf;
 	width: 10px;
 	display: none;
 	border-radius: 100%;
@@ -494,10 +520,10 @@ h4.panel-desc {
 }
 
 .form-table h3 .actions a {
-	color: #FFF;
+	color: #72777c;
 	text-decoration: none;
 	font-size: 11px;
-	padding: 10px 10px 0 10px;
+	padding: 10px;
 	outline: 0;
 	box-shadow: none;
 }
@@ -508,22 +534,24 @@ h4.panel-desc {
 
 .form-table h3 .actions::after {
 	font-family: dashicons;
-	content: "\f140";
+	content: "\f345";
+	color: #72777c;
 	display: inline-block;
 	float: right;
-	font-size: 20px;
-	line-height: 1;
+	font-size: 15px;
+	line-height: 1.5;
 }
 
 .form-table h3.ui-state-active .actions::after {
-	content: "\f142";
+	content: "\f347";
 }
 
 .form-table > div {
 	background-color: #FFF;
 	padding: 15px;
-	border: 1px solid #0073aa;
+	border: 1px solid #e5e5e5;
 	border-radius: 0 0 3px 3px;
+	border-top: 0;
 }
 
 .form-table > div::after {
@@ -533,8 +561,7 @@ h4.panel-desc {
 }
 
 .form-table > div > div {
-	background-color: #f1f1f1;
-	padding: 15px;
+	padding: 10px;
 	position: relative;
 }
 
@@ -550,6 +577,15 @@ h4.panel-desc {
 
 .form-table > div > div > p:last-of-type {
 	margin-bottom: 0;
+}
+
+.notice-is-info {
+	background-color: #fff8e5;
+	border: 1px solid #ffb900;
+	padding: 5px 15px;
+	font-size: 12px;
+	display: block;
+	border-radius: 2px;
 }
 
 .upgrade-parent {
@@ -588,6 +624,12 @@ h4.panel-desc {
 	background: #03ad5c;
 }
 
+@media only screen and (min-width: 1213px) {
+	#search-form-editor .col-wrapper:nth-of-type(3n+0) {
+		margin-right: 0;
+	}
+}
+
 /*
  * Settings
  */
@@ -608,10 +650,6 @@ h4.panel-desc {
 	z-index: 999999;
 }
 
-#search-form-editor .col-wrapper:nth-of-type(3n+0) {
-        margin-right: 0;
-}
-
 .col-title {
 	text-align: center;
 }
@@ -630,7 +668,7 @@ h4.panel-desc {
 }
 
 .col-wrapper.check-radio {
-	margin: 0 15px 10px 0;
+	margin: 0 15px 15px 0;
 }
 
 #wpbody .col-wrapper select[multiple],

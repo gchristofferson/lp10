@@ -119,7 +119,7 @@ class IS_List_Table extends WP_List_Table {
 	}
 
 	function column_cb( $item ) {
-		if ( 'Default Search Form' !== $item->title() ) {
+		if ( 'Default Search Form' !== $item->title() || defined( 'DELETE_DEFAULT_SEARCH_FORM' ) ) {
 			return sprintf(
 				'<input type="checkbox" name="%1$s[]" value="%2$s" />',
 				$this->_args['singular'],
@@ -162,7 +162,7 @@ class IS_List_Table extends WP_List_Table {
 			) );
 		}
 
-		if ( current_user_can( 'is_delete_search_form', $item->id() ) && 'Default Search Form' !== $item->title() ) {
+		if ( current_user_can( 'is_delete_search_form', $item->id() ) && ( 'Default Search Form' !== $item->title() || defined( 'DELETE_DEFAULT_SEARCH_FORM' ) ) ) {
 			$delete_link = wp_nonce_url(
 				add_query_arg( array( 'action' => 'delete' ), $url ),
 				'is-delete-search-form_' . absint( $item->id() ) );

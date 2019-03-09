@@ -65,7 +65,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div id="post-body-content">
 				<div id="titlediv">
 					<div id="titlewrap">
-						<label class="screen-reader-text" id="title-prompt-text" for="title"><?php echo esc_html( __( 'Enter search form name', 'ivory-search' ) ); ?></label>
+						<label class="screen-reader-text" id="title-prompt-text" for="title"><?php echo esc_html( __( 'Search form name', 'ivory-search' ) ); ?></label>
 					<?php
 						$posttitle_atts = array(
 							'type' => 'text',
@@ -77,7 +77,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							'autocomplete' => 'off',
 							'disabled' =>
 								current_user_can( 'is_edit_search_form', $post_id ) && 'Default Search Form' !== $post->title() ? '' : 'disabled',
-							'title' => 'Default Search Form' !== $post->title() ? __( "Enter search form name.", 'ivory-search' ) : __( "Editing title of Default Search Form is prohibited.", 'ivory-search' ),
+							'title' => 'Default Search Form' !== $post->title() ? __( "Search form name", 'ivory-search' ) : __( "Editing the title of Default Search Form is prohibited.", 'ivory-search' ),
 						);
 
 						echo sprintf( '<input %s />', IS_Admin_Public::format_atts( $posttitle_atts ) );
@@ -184,10 +184,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<h3><?php echo esc_html( __( 'Information', 'ivory-search' ) ); ?></h3>
 					<div class="inside">
 						<ul>
-							<li><a href="https://ivorysearch.com/documentation/" target="_blank"><?php _e( 'Docs', 'ivory-search' ); ?></a></li>
+							<li><a href="https://ivorysearch.com/documentation/" target="_blank"><?php _e( 'Documentation', 'ivory-search' ); ?></a></li>
 							<li><a href="https://ivorysearch.com/support/" target="_blank"><?php _e( 'Support', 'ivory-search' ); ?></a></li>
-							<li><a href="https://ivorysearch.com/contact/" target="_blank"><?php _e( 'Contact', 'ivory-search' ); ?></a></li>
-							<li><a href="https://wordpress.org/support/plugin/add-search-to-menu/reviews/?filter=5#new-post" target="_blank"><?php _e( 'Give us a rating', 'ivory-search' ); ?></a></li>
+							<li><a href="https://ivorysearch.com/contact/" target="_blank"><?php _e( 'Contact Us', 'ivory-search' ); ?></a></li>
+							<li><a href="https://wordpress.org/support/plugin/add-search-to-menu/reviews/?filter=5#new-post" target="_blank"><?php _e( 'Rate Ivory Search', 'ivory-search' ); ?></a></li>
 						</ul>
 					</div>
 				</div><!-- #informationdiv -->

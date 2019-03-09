@@ -133,6 +133,15 @@ class IS_Public
     }
     
     /**
+     * Add classes to body element.
+     */
+    function is_body_classes( $classes )
+    {
+        $classes[] = get_template();
+        return $classes;
+    }
+    
+    /**
      * Displays search form by processing shortcode.
      */
     function search_form_shortcode( $atts )
@@ -547,8 +556,6 @@ class IS_Public
                                                 case 'post_status':
                                                     break;
                                                 case 'comment_count':
-                                                    break;
-                                                case 'post_file_type':
                                                     break;
                                             }
                                         }

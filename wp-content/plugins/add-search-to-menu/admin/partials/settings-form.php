@@ -94,9 +94,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<h3><?php echo esc_html( __( 'Information', 'ivory-search' ) ); ?></h3>
 					<div class="inside">
 						<ul>
-							<li><a href="https://ivorysearch.com/documentation/" target="_blank"><?php _e( 'Docs', 'ivory-search' ); ?></a></li>
+							<li><a href="https://ivorysearch.com/documentation/" target="_blank"><?php _e( 'Documentation', 'ivory-search' ); ?></a></li>
 							<li><a href="https://ivorysearch.com/support/" target="_blank"><?php _e( 'Support', 'ivory-search' ); ?></a></li>
-							<li><a href="https://ivorysearch.com/contact/" target="_blank"><?php _e( 'Contact', 'ivory-search' ); ?></a></li>
+							<li><a href="https://ivorysearch.com/contact/" target="_blank"><?php _e( 'Contact Us', 'ivory-search' ); ?></a></li>
 							<li><a href="https://wordpress.org/support/plugin/add-search-to-menu/reviews/?filter=5#new-post" target="_blank"><?php _e( 'Give us a rating', 'ivory-search' ); ?></a></li>
 						</ul>
 					</div>
