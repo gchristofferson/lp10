@@ -3,7 +3,7 @@
  * Plugin Name: Ivory Search
  * Plugin URI:  https://ivorysearch.com
  * Description: The WordPress Search plugin to power your WordPress site custom search. Helping you build a better search. Includes WooCommerce Search support!
- * Version:     4.2
+ * Version:     4.2.1
  * Author:      Ivory Search
  * Author URI:  https://ivorysearch.com/
  * License:     GPL2+
@@ -37,6 +37,11 @@
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exits if accessed directly.
+}
+
+if ( function_exists( 'is_fs' ) ) {
+	is_fs()->set_basename( false, __FILE__ );
+	return;
 }
 
 /**

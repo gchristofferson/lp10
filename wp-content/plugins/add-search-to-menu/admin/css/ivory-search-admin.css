@@ -466,7 +466,8 @@ h4.panel-desc {
 #search-body .form-table h3 {
 	clear: both;
 	cursor: pointer;
-	background-color: #fff;
+	background: #fff;
+	font-weight: 600;
 	color: #23282d;
 	outline: 0;
 	padding: 8px 10px;

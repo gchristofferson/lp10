@@ -5,7 +5,7 @@ Tags: search, woocommerce search, image search, search shortcode,  exclude from 
 Requires at least: 3.9
 Tested up to: 5.0
 Requires PHP: 5.2.4
-Stable tag: 4.2
+Stable tag: 4.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -171,10 +171,14 @@ Yes we do. We try our best to help free users with customisation requests and we
 4. Full Width Search Form
 5. Popup Search Form
 6. Search Forms
-7. Search Form
+7. Edit Search Form
 8. Plugin Settings
 
 == Changelog ==
+
+= 4.2.1 =
+* Updated - freemius SDK.
+* Fixed - new search form saving issue.
 
 = 4.2 =
 * Enhanced plugin admin settings user interface.

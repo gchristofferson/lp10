@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Ivory Search\n"
-"POT-Creation-Date: 2019-03-07 09:51+0530\n"
-"PO-Revision-Date: 2019-03-07 09:51+0530\n"
+"POT-Creation-Date: 2019-03-10 11:49+0530\n"
+"PO-Revision-Date: 2019-03-10 11:49+0530\n"
 "Last-Translator: \n"
 "Language-Team: Ivory Search <admin@ivorysearch.com>\n"
 "Language: en_US\n"
@@ -25,7 +25,7 @@ msgid "Edit Search Form"
 msgstr ""
 
 #: ../admin/class-is-admin.php:135
-msgid "Click on the search form link to edit it."
+msgid "Click on the search form title to edit it."
 msgstr ""
 
 #: ../admin/class-is-admin.php:136
@@ -153,35 +153,35 @@ msgstr ""
 msgid "You are not allowed to edit this item."
 msgstr ""
 
-#: ../admin/class-is-admin.php:601
+#: ../admin/class-is-admin.php:604
 msgid "You are not allowed to reset this item."
 msgstr ""
 
-#: ../admin/class-is-admin.php:642
+#: ../admin/class-is-admin.php:645
 msgid "You are not allowed to copy this item."
 msgstr ""
 
-#: ../admin/class-is-admin.php:683
+#: ../admin/class-is-admin.php:686
 msgid "You are not allowed to delete this item."
 msgstr ""
 
-#: ../admin/class-is-admin.php:687
+#: ../admin/class-is-admin.php:690
 msgid "Error in deleting."
 msgstr ""
 
-#: ../admin/class-is-admin.php:899
+#: ../admin/class-is-admin.php:902
 msgid "Save Form"
 msgstr ""
 
-#: ../admin/class-is-admin.php:911
+#: ../admin/class-is-admin.php:914
 msgid "Upgrade to Pro to Access"
 msgstr ""
 
-#: ../admin/class-is-admin.php:918
+#: ../admin/class-is-admin.php:921
 msgid "Install Premium Version to Access"
 msgstr ""
 
-#: ../admin/class-is-admin.php:920
+#: ../admin/class-is-admin.php:923
 msgid "Upgrade to Pro Plus to Access"
 msgstr ""
 
@@ -1184,16 +1184,4 @@ msgstr ""
 
 #: ../includes/class-is-widget.php:14
 msgid "Displays ivory search form."
-msgstr ""
-
-#: ../includes/freemius.php:56
-#, php-format
-msgid "Hey %1$s"
-msgstr ""
-
-#: ../includes/freemius.php:56
-#, php-format
-msgid ""
-"Please help us improve %2$s by securely sharing some usage data with %5$s. "
-"If you skip this, that's okay! %2$s will still work just fine."
 msgstr ""

@@ -150,7 +150,7 @@ class IS_Admin
         // replace all periods in 1.0 with an underscore
         $prefix = 'is_admin_pointers_' . $version . '_';
         $new_pointer_content = '<h3>' . __( 'Edit Search Form', 'ivory-search' ) . '</h3>';
-        $new_pointer_content .= '<p>' . __( 'Click on the search form link to edit it.', 'ivory-search' ) . '</p>';
+        $new_pointer_content .= '<p>' . __( 'Click on the search form title to edit it.', 'ivory-search' ) . '</p>';
         $new_pointer_content .= '<p>' . __( 'Edit the Default Search Form to manage the default WordPress search.', 'ivory-search' ) . '</p>';
         return array(
             $prefix . 'is_pointers' => array(
@@ -589,8 +589,13 @@ class IS_Admin
             $args['_is_excludes'] = ( isset( $_POST['_is_excludes'] ) ? $_POST['_is_excludes'] : '' );
             $args['_is_settings'] = ( isset( $_POST['_is_settings'] ) ? $_POST['_is_settings'] : '' );
             $args['tab'] = ( isset( $_POST['tab'] ) ? $_POST['tab'] : 'includes' );
-            $search_form = IS_Search_Form::get_instance( $id );
-            $properties = $search_form->get_properties();
+            $properties = array();
+            
+            if ( '-1' != $id ) {
+                $search_form = IS_Search_Form::get_instance( $id );
+                $properties = $search_form->get_properties();
+            }
+            
             
             if ( 'includes' === $args['tab'] && !empty($properties['_is_excludes']) ) {
                 $args['_is_excludes'] = $properties['_is_excludes'];

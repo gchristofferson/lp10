@@ -50,7 +50,13 @@ class IS_Search_Editor
         echo  sprintf( '<div class="search-form-editor-panel" id="%1$s">', esc_attr( $tab ) ) ;
         $this->notice( $tab, $tab . '_panel' );
         $callback = $tab . '_panel';
-        $this->{$callback}( $this->search_form );
+        
+        if ( method_exists( $this, $callback ) ) {
+            $this->{$callback}( $this->search_form );
+        } else {
+            _e( 'The requested section does not exist.', 'ivory-search' );
+        }
+        
         echo  '</div>' ;
     }
     
