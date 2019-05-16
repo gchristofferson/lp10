@@ -3,7 +3,7 @@ Contributors: iberezansky
 Donate link: https://www.paypal.me/iberezansky
 Tags: flipbook, flip book, pdf viewer, pdf flipbook, pdf to flip book
 Requires at least: 4.3
-Tested up to: 5.0.2
+Tested up to: 5.2
 Stable tag: /trunk/
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -267,6 +267,27 @@ Read <a href="http://3dflipbook.net/wp-user-manual">the user manual</a>.
 10. black-skin.
 
 == Changelog ==
+
+<h4>Version 1.9.17</h4>
+<ul>
+  <li>Fixed disappearing edit details</li>
+</ul>
+
+<h4>Version 1.9.16</h4>
+<ul>
+  <li>Fixed error in classic blocks - insert dialog</li>
+</ul>
+
+<h4>Version 1.9.15</h4>
+<ul>
+  <li>JavaScript ready function</li>
+  <li>Editing PDF url</li>
+</ul>
+
+<h4>Version 1.9.12</h4>
+<ul>
+  <li>Fixed an admin side styles issue</li>
+</ul>
 
 <h4>Version 1.9.11</h4>
 <ul>

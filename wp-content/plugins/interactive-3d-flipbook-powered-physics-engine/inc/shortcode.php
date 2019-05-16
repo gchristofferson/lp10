@@ -25,6 +25,7 @@
         'lightbox'=> 'dark',
         'classes'=> '',
         'urlparam'=> 'fb3d-page',
+        'page-n'=>'0',
         'pdf'=> '',
         'tax'=> 'null',
         'thumbnail'=> '',

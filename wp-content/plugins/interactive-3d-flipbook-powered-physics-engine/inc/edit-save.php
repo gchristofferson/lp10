@@ -53,6 +53,7 @@
         '3dfb-post-data-pdf_pages'=> array('default'=> 0, 'qualifier'=> '%d'),
         '3dfb-post-thumbnail-type'=> array('default'=> 'auto', 'qualifier'=> '%s'),
         '3dfb-post-thumbnail-data-post_ID'=> array('default'=> 0, 'qualifier'=> '%d'),
+        '3dfb-post-ready_function'=> array('default'=> '', 'qualifier'=> '%s'),
 
         '3dfb-post-props-height'=> array('default'=> 'auto', 'qualifier'=> '%f'),
         '3dfb-post-props-width'=> array('default'=> 'auto', 'qualifier'=> '%f'),

@@ -20,13 +20,15 @@
     wp_enqueue_style(POST_ID.'-insert');
     wp_enqueue_script(POST_ID.'-shortcode-generator');
     ?>
-    <h1><?php _e('3D FlipBook - Shortcode Generator', POST_ID);?></h1>
-    <div class="form-group">
-      <textarea id="3dfb-shortcode-textarea" class="form-control"></textarea>
-    </div>
-    <div class="fb3d-admin-container">
-      <div id="<?php echo(POST_ID.'-shortcode-generator');?>">
+    <div class="fb3d">
+      <h1><?php _e('3D FlipBook - Shortcode Generator', POST_ID);?></h1>
+      <div class="form-group">
+        <textarea id="3dfb-shortcode-textarea" class="form-control"></textarea>
+      </div>
+      <div class="fb3d-admin-container">
+        <div id="<?php echo(POST_ID.'-shortcode-generator');?>">
 
+        </div>
       </div>
     </div>
     <?php

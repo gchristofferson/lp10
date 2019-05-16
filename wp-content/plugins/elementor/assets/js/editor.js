@@ -1,4 +1,4 @@
-/*! elementor - v2.5.7 - 14-03-2019 */
+/*! elementor - v2.5.15 - 07-05-2019 */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -92,9 +92,9 @@
 "use strict";
 
 
-var ControlBaseView = __webpack_require__(4),
-    TagsBehavior = __webpack_require__(98),
-    Validator = __webpack_require__(10),
+var ControlBaseView = __webpack_require__(3),
+    TagsBehavior = __webpack_require__(57),
+    Validator = __webpack_require__(9),
     ControlBaseDataView;
 
 ControlBaseDataView = ControlBaseView.extend({
@@ -480,48 +480,6 @@ module.exports = ControlBaseMultipleItemView;
 "use strict";
 
 
-var ControlBaseDataView = __webpack_require__(0),
-    ControlSelect2ItemView;
-
-ControlSelect2ItemView = ControlBaseDataView.extend({
-	getSelect2Placeholder: function getSelect2Placeholder() {
-		return this.ui.select.children('option:first[value=""]').text();
-	},
-
-	getSelect2DefaultOptions: function getSelect2DefaultOptions() {
-		return {
-			allowClear: true,
-			placeholder: this.getSelect2Placeholder(),
-			dir: elementorCommon.config.isRTL ? 'rtl' : 'ltr'
-		};
-	},
-
-	getSelect2Options: function getSelect2Options() {
-		return jQuery.extend(this.getSelect2DefaultOptions(), this.model.get('select2options'));
-	},
-
-	onReady: function onReady() {
-		this.ui.select.select2(this.getSelect2Options());
-	},
-
-	onBeforeDestroy: function onBeforeDestroy() {
-		if (this.ui.select.data('select2')) {
-			this.ui.select.select2('destroy');
-		}
-
-		this.$el.remove();
-	}
-});
-
-module.exports = ControlSelect2ItemView;
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
 var ControlBaseView;
 
 ControlBaseView = Marionette.CompositeView.extend({
@@ -611,6 +569,48 @@ ControlBaseView = Marionette.CompositeView.extend({
 module.exports = ControlBaseView;
 
 /***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var ControlBaseDataView = __webpack_require__(0),
+    ControlSelect2ItemView;
+
+ControlSelect2ItemView = ControlBaseDataView.extend({
+	getSelect2Placeholder: function getSelect2Placeholder() {
+		return this.ui.select.children('option:first[value=""]').text();
+	},
+
+	getSelect2DefaultOptions: function getSelect2DefaultOptions() {
+		return {
+			allowClear: true,
+			placeholder: this.getSelect2Placeholder(),
+			dir: elementorCommon.config.isRTL ? 'rtl' : 'ltr'
+		};
+	},
+
+	getSelect2Options: function getSelect2Options() {
+		return jQuery.extend(this.getSelect2DefaultOptions(), this.model.get('select2options'));
+	},
+
+	onReady: function onReady() {
+		this.ui.select.select2(this.getSelect2Options());
+	},
+
+	onBeforeDestroy: function onBeforeDestroy() {
+		if (this.ui.select.data('select2')) {
+			this.ui.select.select2('destroy');
+		}
+
+		this.$el.remove();
+	}
+});
+
+module.exports = ControlSelect2ItemView;
+
+/***/ }),
 /* 5 */,
 /* 6 */,
 /* 7 */
@@ -627,8 +627,8 @@ var _environment2 = _interopRequireDefault(_environment);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var ControlsCSSParser = __webpack_require__(9),
-    Validator = __webpack_require__(10),
+var ControlsCSSParser = __webpack_require__(10),
+    Validator = __webpack_require__(9),
     BaseContainer = __webpack_require__(26),
     BaseElementView;
 
@@ -716,7 +716,7 @@ BaseElementView = BaseContainer.extend({
 		if ('section' === elType) {
 			ChildView = __webpack_require__(27);
 		} else if ('column' === elType) {
-			ChildView = __webpack_require__(91);
+			ChildView = __webpack_require__(96);
 		} else {
 			ChildView = elementor.modules.elements.views.Widget;
 		}
@@ -1373,6 +1373,8 @@ BaseElementView = BaseContainer.extend({
 	onDestroy: function onDestroy() {
 		this.controlsCSSParser.removeStyleFromDocument();
 
+		this.getEditModel().get('settings').validators = {};
+
 		elementor.channels.data.trigger('element:destroy', this.model);
 	}
 });
@@ -1386,7 +1388,7 @@ module.exports = BaseElementView;
 "use strict";
 
 
-var ContextMenu = __webpack_require__(89);
+var ContextMenu = __webpack_require__(94);
 
 module.exports = Marionette.Behavior.extend({
 
@@ -1495,6 +1497,56 @@ module.exports = Marionette.Behavior.extend({
 
 /***/ }),
 /* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = elementorModules.Module.extend({
+	errors: [],
+
+	__construct: function __construct(settings) {
+		var customValidationMethod = settings.customValidationMethod;
+
+		if (customValidationMethod) {
+			this.validationMethod = customValidationMethod;
+		}
+	},
+
+	getDefaultSettings: function getDefaultSettings() {
+		return {
+			validationTerms: {}
+		};
+	},
+
+	isValid: function isValid() {
+		var validationErrors = this.validationMethod.apply(this, arguments);
+
+		if (validationErrors.length) {
+			this.errors = validationErrors;
+
+			return false;
+		}
+
+		return true;
+	},
+
+	validationMethod: function validationMethod(newValue) {
+		var validationTerms = this.getSettings('validationTerms'),
+		    errors = [];
+
+		if (validationTerms.required) {
+			if (!('' + newValue).length) {
+				errors.push('Required value is empty');
+			}
+		}
+
+		return errors;
+	}
+});
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1737,56 +1789,6 @@ ControlsCSSParser.parsePropertyPlaceholder = function (control, value, controls,
 };
 
 module.exports = ControlsCSSParser;
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = elementorModules.Module.extend({
-	errors: [],
-
-	__construct: function __construct(settings) {
-		var customValidationMethod = settings.customValidationMethod;
-
-		if (customValidationMethod) {
-			this.validationMethod = customValidationMethod;
-		}
-	},
-
-	getDefaultSettings: function getDefaultSettings() {
-		return {
-			validationTerms: {}
-		};
-	},
-
-	isValid: function isValid() {
-		var validationErrors = this.validationMethod.apply(this, arguments);
-
-		if (validationErrors.length) {
-			this.errors = validationErrors;
-
-			return false;
-		}
-
-		return true;
-	},
-
-	validationMethod: function validationMethod(newValue) {
-		var validationTerms = this.getSettings('validationTerms'),
-		    errors = [];
-
-		if (validationTerms.required) {
-			if (!('' + newValue).length) {
-				errors.push('Required value is empty');
-			}
-		}
-
-		return errors;
-	}
-});
 
 /***/ }),
 /* 11 */
@@ -2368,7 +2370,7 @@ module.exports = EventManager;
 "use strict";
 
 
-var ControlsCSSParser = __webpack_require__(9);
+var ControlsCSSParser = __webpack_require__(10);
 
 module.exports = elementorModules.ViewModule.extend({
 	model: null,
@@ -2450,7 +2452,7 @@ module.exports = elementorModules.ViewModule.extend({
 			return;
 		}
 
-		var settings = this.model.toJSON({ removeDefault: true }),
+		var settings = this.model.toJSON({ remove: ['default'] }),
 		    data = this.getDataToSave({
 			data: settings
 		});
@@ -2937,11 +2939,11 @@ module.exports = TemplateLibraryTemplateView;
 "use strict";
 
 
-var _itemView = __webpack_require__(83);
+var _itemView = __webpack_require__(88);
 
 var _itemView2 = _interopRequireDefault(_itemView);
 
-var _empty = __webpack_require__(84);
+var _empty = __webpack_require__(89);
 
 var _empty2 = _interopRequireDefault(_empty);
 
@@ -3167,7 +3169,7 @@ module.exports = Marionette.CompositeView.extend({
 "use strict";
 
 
-var _inline = __webpack_require__(90);
+var _inline = __webpack_require__(95);
 
 var _inline2 = _interopRequireDefault(_inline);
 
@@ -4029,7 +4031,7 @@ module.exports = RepeaterRowView;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var ColumnSettingsModel = __webpack_require__(126),
+var ColumnSettingsModel = __webpack_require__(127),
     ElementModel;
 
 ElementModel = Backbone.Model.extend({
@@ -4232,7 +4234,7 @@ ElementModel = Backbone.Model.extend({
 	},
 
 	toJSON: function toJSON(options) {
-		options = _.extend({ copyHtmlCache: false }, options);
+		options = options || {};
 
 		// Call parent's toJSON method
 		var data = Backbone.Model.prototype.toJSON.call(this);
@@ -4247,6 +4249,12 @@ ElementModel = Backbone.Model.extend({
 			data.htmlCache = this.getHtmlCache();
 		} else {
 			delete data.htmlCache;
+		}
+
+		if (options.remove) {
+			options.remove.forEach(function (key) {
+				return delete data[key];
+			});
 		}
 
 		return data;
@@ -4480,8 +4488,8 @@ module.exports = PanelSchemeColorsView;
 
 
 var childViewTypes = {
-	color: __webpack_require__(152),
-	typography: __webpack_require__(153)
+	color: __webpack_require__(153),
+	typography: __webpack_require__(154)
 },
     PanelSchemeBaseView;
 
@@ -5120,24 +5128,27 @@ var _environment = __webpack_require__(1);
 
 var _environment2 = _interopRequireDefault(_environment);
 
+var _dateTime = __webpack_require__(56);
+
+var _dateTime2 = _interopRequireDefault(_dateTime);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/* global ElementorConfig */
 var App = Marionette.Application.extend({
 	loaded: false,
 
 	previewLoadedOnce: false,
 
-	helpers: __webpack_require__(56),
-	imagesManager: __webpack_require__(57),
-	debug: __webpack_require__(58),
-	schemes: __webpack_require__(59),
-	presetsFactory: __webpack_require__(60),
-	templates: __webpack_require__(61),
+	helpers: __webpack_require__(61),
+	imagesManager: __webpack_require__(62),
+	debug: __webpack_require__(63),
+	schemes: __webpack_require__(64),
+	presetsFactory: __webpack_require__(65),
+	templates: __webpack_require__(66),
 	// TODO: BC Since 2.3.0
 	ajax: elementorCommon.ajax,
-	conditions: __webpack_require__(76),
-	history: __webpack_require__(77),
+	conditions: __webpack_require__(81),
+	history: __webpack_require__(82),
 
 	channels: {
 		editor: Backbone.Radio.channel('ELEMENTOR:editor'),
@@ -5172,44 +5183,45 @@ var App = Marionette.Application.extend({
 			},
 			saver: {
 				behaviors: {
-					FooterSaver: __webpack_require__(97)
+					FooterSaver: __webpack_require__(102)
 				}
 			}
 		},
 		controls: {
-			Animation: __webpack_require__(3),
-			Base: __webpack_require__(4),
+			Animation: __webpack_require__(4),
+			Base: __webpack_require__(3),
 			BaseData: __webpack_require__(0),
 			BaseMultiple: __webpack_require__(2),
 			Box_shadow: __webpack_require__(29),
-			Button: __webpack_require__(102),
+			Button: __webpack_require__(103),
 			Choose: __webpack_require__(30),
-			Code: __webpack_require__(103),
-			Color: __webpack_require__(104),
-			Date_time: __webpack_require__(105),
+			Code: __webpack_require__(104),
+			Color: __webpack_require__(105),
+			Date_time: _dateTime2.default,
 			Dimensions: __webpack_require__(106),
 			Font: __webpack_require__(107),
 			Gallery: __webpack_require__(108),
-			Hover_animation: __webpack_require__(3),
-			Icon: __webpack_require__(109),
-			Image_dimensions: __webpack_require__(110),
-			Media: __webpack_require__(111),
-			Number: __webpack_require__(112),
-			Order: __webpack_require__(114),
-			Popover_toggle: __webpack_require__(115),
-			Repeater: __webpack_require__(116),
+			Hidden: __webpack_require__(109),
+			Hover_animation: __webpack_require__(4),
+			Icon: __webpack_require__(110),
+			Image_dimensions: __webpack_require__(111),
+			Media: __webpack_require__(112),
+			Number: __webpack_require__(113),
+			Order: __webpack_require__(115),
+			Popover_toggle: __webpack_require__(116),
+			Repeater: __webpack_require__(117),
 			RepeaterRow: __webpack_require__(32),
-			Section: __webpack_require__(117),
-			Select: __webpack_require__(118),
-			Select2: __webpack_require__(3),
-			Slider: __webpack_require__(119),
-			Structure: __webpack_require__(120),
-			Switcher: __webpack_require__(121),
-			Tab: __webpack_require__(122),
+			Section: __webpack_require__(118),
+			Select: __webpack_require__(119),
+			Select2: __webpack_require__(4),
+			Slider: __webpack_require__(120),
+			Structure: __webpack_require__(121),
+			Switcher: __webpack_require__(122),
+			Tab: __webpack_require__(123),
 			Text_shadow: __webpack_require__(29),
-			Url: __webpack_require__(123),
-			Wp_widget: __webpack_require__(124),
-			Wysiwyg: __webpack_require__(125)
+			Url: __webpack_require__(124),
+			Wp_widget: __webpack_require__(125),
+			Wysiwyg: __webpack_require__(126)
 		},
 		elements: {
 			models: {
@@ -5222,7 +5234,7 @@ var App = Marionette.Application.extend({
 				Element: __webpack_require__(33)
 			},
 			views: {
-				Widget: __webpack_require__(127)
+				Widget: __webpack_require__(128)
 			}
 		},
 		layouts: {
@@ -5231,11 +5243,11 @@ var App = Marionette.Application.extend({
 					elements: {
 						views: {
 							Global: __webpack_require__(35),
-							Elements: __webpack_require__(131)
+							Elements: __webpack_require__(132)
 						}
 					},
 					menu: {
-						Menu: __webpack_require__(132)
+						Menu: __webpack_require__(133)
 					}
 				}
 			}
@@ -5370,10 +5382,10 @@ var App = Marionette.Application.extend({
 
 	initComponents: function initComponents() {
 		var EventManager = __webpack_require__(13),
-		    DynamicTags = __webpack_require__(135),
-		    Settings = __webpack_require__(137),
-		    Saver = __webpack_require__(141),
-		    Notifications = __webpack_require__(142);
+		    DynamicTags = __webpack_require__(136),
+		    Settings = __webpack_require__(138),
+		    Saver = __webpack_require__(142),
+		    Notifications = __webpack_require__(143);
 
 		this.hooks = new EventManager();
 
@@ -5714,7 +5726,7 @@ var App = Marionette.Application.extend({
 	},
 
 	initPanel: function initPanel() {
-		this.addRegions({ panel: __webpack_require__(143) });
+		this.addRegions({ panel: __webpack_require__(144) });
 
 		this.trigger('panel:init');
 	},
@@ -6102,7 +6114,7 @@ var App = Marionette.Application.extend({
 			sections: iframeRegion
 		});
 
-		var Preview = __webpack_require__(159);
+		var Preview = __webpack_require__(160);
 
 		this.sections.show(new Preview({ model: this.elementsModel }));
 
@@ -6182,7 +6194,7 @@ var App = Marionette.Application.extend({
 	onPreviewLoadingError: function onPreviewLoadingError() {
 		this.showFatalErrorDialog({
 			headerMessage: this.translate('preview_not_loading_header'),
-			message: this.translate('preview_not_loading_message'),
+			message: this.translate('preview_not_loading_message') + '<br><a href="' + this.config.document.urls.preview + '" target="_blank">Preview Debug</a>',
 			onConfirm: function onConfirm() {
 				open(elementor.config.help_preview_error_url, '_blank');
 			}
@@ -6232,7 +6244,8 @@ var App = Marionette.Application.extend({
 			$elementsToHide.hide();
 		});
 	}
-});
+}); /* global ElementorConfig */
+
 
 window.elementor = new App();
 
@@ -7585,6 +7598,507 @@ exports.default = _class;
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ControlBaseDataView = __webpack_require__(0);
+
+var _class = function (_ControlBaseDataView) {
+	_inherits(_class, _ControlBaseDataView);
+
+	function _class() {
+		_classCallCheck(this, _class);
+
+		return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).apply(this, arguments));
+	}
+
+	_createClass(_class, [{
+		key: 'onReady',
+		value: function onReady() {
+			var options = _.extend({
+				enableTime: true,
+				minuteIncrement: 1
+			}, this.model.get('picker_options'));
+
+			this.ui.input.flatpickr(options);
+		}
+	}, {
+		key: 'onBeforeDestroy',
+		value: function onBeforeDestroy() {
+			this.ui.input.flatpickr().destroy();
+		}
+	}]);
+
+	return _class;
+}(ControlBaseDataView);
+
+exports.default = _class;
+
+/***/ }),
+/* 57 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var TagPanelView = __webpack_require__(58);
+
+module.exports = Marionette.Behavior.extend({
+
+	tagView: null,
+
+	listenerAttached: false,
+
+	ui: {
+		tagArea: '.elementor-control-tag-area',
+		dynamicSwitcher: '.elementor-control-dynamic-switcher'
+	},
+
+	events: {
+		'click @ui.dynamicSwitcher': 'onDynamicSwitcherClick'
+	},
+
+	initialize: function initialize() {
+		if (!this.listenerAttached) {
+			this.listenTo(this.view.options.elementSettingsModel, 'change:external:__dynamic__', this.onAfterExternalChange);
+			this.listenerAttached = true;
+		}
+	},
+
+	renderTools: function renderTools() {
+		if (this.getOption('dynamicSettings').default) {
+			return;
+		}
+
+		var $dynamicSwitcher = jQuery(Marionette.Renderer.render('#tmpl-elementor-control-dynamic-switcher'));
+
+		if (this.view.model.get('label_block')) {
+			this.ui.controlTitle.after($dynamicSwitcher);
+
+			var $responsiveSwitchers = $dynamicSwitcher.next('.elementor-control-responsive-switchers');
+
+			if ($responsiveSwitchers.length) {
+				$responsiveSwitchers.after($dynamicSwitcher);
+			}
+		} else {
+			this.ui.controlTitle.before($dynamicSwitcher);
+		}
+
+		this.ui.dynamicSwitcher = this.$el.find(this.ui.dynamicSwitcher.selector);
+	},
+
+	toggleDynamicClass: function toggleDynamicClass() {
+		this.$el.toggleClass('elementor-control-dynamic-value', this.isDynamicMode());
+	},
+
+	isDynamicMode: function isDynamicMode() {
+		var dynamicSettings = this.view.elementSettingsModel.get('__dynamic__');
+
+		return !!(dynamicSettings && dynamicSettings[this.view.model.get('name')]);
+	},
+
+	createTagsList: function createTagsList() {
+		var tags = _.groupBy(this.getOption('tags'), 'group'),
+		    groups = elementor.dynamicTags.getConfig('groups'),
+		    $tagsList = this.ui.tagsList = jQuery('<div>', { class: 'elementor-tags-list' }),
+		    $tagsListInner = jQuery('<div>', { class: 'elementor-tags-list__inner' });
+
+		$tagsList.append($tagsListInner);
+
+		jQuery.each(groups, function (groupName) {
+			var groupTags = tags[groupName];
+
+			if (!groupTags) {
+				return;
+			}
+
+			var group = this,
+			    $groupTitle = jQuery('<div>', { class: 'elementor-tags-list__group-title' }).text(group.title);
+
+			$tagsListInner.append($groupTitle);
+
+			groupTags.forEach(function (tag) {
+				var $tag = jQuery('<div>', { class: 'elementor-tags-list__item' });
+
+				$tag.text(tag.title).attr('data-tag-name', tag.name);
+
+				$tagsListInner.append($tag);
+			});
+		});
+
+		$tagsListInner.on('click', '.elementor-tags-list__item', this.onTagsListItemClick.bind(this));
+
+		elementorCommon.elements.$body.append($tagsList);
+	},
+
+	getTagsList: function getTagsList() {
+		if (!this.ui.tagsList) {
+			this.createTagsList();
+		}
+
+		return this.ui.tagsList;
+	},
+
+	toggleTagsList: function toggleTagsList() {
+		var $tagsList = this.getTagsList();
+
+		if ($tagsList.is(':visible')) {
+			$tagsList.hide();
+
+			return;
+		}
+
+		var direction = elementorCommon.config.isRTL ? 'left' : 'right';
+
+		$tagsList.show().position({
+			my: direction + ' top',
+			at: direction + ' bottom+5',
+			of: this.ui.dynamicSwitcher
+		});
+	},
+
+	setTagView: function setTagView(id, name, settings) {
+		if (this.tagView) {
+			this.tagView.destroy();
+		}
+
+		var tagView = this.tagView = new TagPanelView({
+			id: id,
+			name: name,
+			settings: settings,
+			controlName: this.view.model.get('name'),
+			dynamicSettings: this.getOption('dynamicSettings')
+		});
+
+		tagView.render();
+
+		this.ui.tagArea.after(tagView.el);
+
+		this.listenTo(tagView.model, 'change', this.onTagViewModelChange.bind(this)).listenTo(tagView, 'remove', this.onTagViewRemove.bind(this));
+	},
+
+	setDefaultTagView: function setDefaultTagView() {
+		var tagData = elementor.dynamicTags.tagTextToTagData(this.getDynamicValue());
+
+		this.setTagView(tagData.id, tagData.name, tagData.settings);
+	},
+
+	tagViewToTagText: function tagViewToTagText() {
+		var tagView = this.tagView;
+
+		return elementor.dynamicTags.tagDataToTagText(tagView.getOption('id'), tagView.getOption('name'), tagView.model);
+	},
+
+	getDynamicValue: function getDynamicValue() {
+		return this.view.elementSettingsModel.get('__dynamic__')[this.view.model.get('name')];
+	},
+
+	getDynamicControlSettings: function getDynamicControlSettings() {
+		return {
+			control: {
+				name: '__dynamic__',
+				label: this.view.model.get('label')
+			}
+		};
+	},
+
+	setDynamicValue: function setDynamicValue(value) {
+		var settingKey = this.view.model.get('name'),
+		    dynamicSettings = this.view.elementSettingsModel.get('__dynamic__') || {};
+
+		dynamicSettings = elementorCommon.helpers.cloneObject(dynamicSettings);
+
+		dynamicSettings[settingKey] = value;
+
+		this.view.elementSettingsModel.set('__dynamic__', dynamicSettings, this.getDynamicControlSettings(settingKey));
+
+		this.toggleDynamicClass();
+	},
+
+	destroyTagView: function destroyTagView() {
+		if (this.tagView) {
+			this.tagView.destroy();
+
+			this.tagView = null;
+		}
+	},
+
+	onRender: function onRender() {
+		this.$el.addClass('elementor-control-dynamic');
+
+		this.renderTools();
+
+		this.toggleDynamicClass();
+
+		if (this.isDynamicMode()) {
+			this.setDefaultTagView();
+		}
+	},
+
+	onDynamicSwitcherClick: function onDynamicSwitcherClick() {
+		this.toggleTagsList();
+	},
+
+	onTagsListItemClick: function onTagsListItemClick(event) {
+		var $tag = jQuery(event.currentTarget);
+
+		this.setTagView(elementor.helpers.getUniqueID(), $tag.data('tagName'), {});
+
+		this.setDynamicValue(this.tagViewToTagText());
+
+		this.toggleTagsList();
+
+		if (this.tagView.getTagConfig().settings_required) {
+			this.tagView.showSettingsPopup();
+		}
+	},
+
+	onTagViewModelChange: function onTagViewModelChange() {
+		this.setDynamicValue(this.tagViewToTagText());
+	},
+
+	onTagViewRemove: function onTagViewRemove() {
+		var settingKey = this.view.model.get('name'),
+		    dynamicSettings = this.view.elementSettingsModel.get('__dynamic__');
+
+		dynamicSettings = elementorCommon.helpers.cloneObject(dynamicSettings);
+
+		delete dynamicSettings[settingKey];
+
+		if (Object.keys(dynamicSettings).length) {
+			this.view.elementSettingsModel.set('__dynamic__', dynamicSettings, this.getDynamicControlSettings(settingKey));
+		} else {
+			this.view.elementSettingsModel.unset('__dynamic__', this.getDynamicControlSettings(settingKey));
+		}
+
+		this.toggleDynamicClass();
+	},
+
+	onAfterExternalChange: function onAfterExternalChange() {
+		this.destroyTagView();
+
+		if (this.isDynamicMode()) {
+			this.setDefaultTagView();
+		}
+
+		this.toggleDynamicClass();
+	},
+
+	onDestroy: function onDestroy() {
+		this.destroyTagView();
+	}
+});
+
+/***/ }),
+/* 58 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var TagControlsStack = __webpack_require__(59);
+
+module.exports = Marionette.ItemView.extend({
+
+	className: 'elementor-dynamic-cover elementor-input-style',
+
+	tagControlsStack: null,
+
+	templateHelpers: function templateHelpers() {
+		var helpers = {};
+		if (this.model) {
+			helpers.controls = this.model.options.controls;
+		}
+
+		return helpers;
+	},
+
+	ui: {
+		remove: '.elementor-dynamic-cover__remove'
+	},
+
+	events: function events() {
+		var events = {
+			'click @ui.remove': 'onRemoveClick'
+		};
+
+		if (this.hasSettings()) {
+			events.click = 'onClick';
+		}
+
+		return events;
+	},
+
+	getTemplate: function getTemplate() {
+		var config = this.getTagConfig(),
+		    templateFunction = Marionette.TemplateCache.get('#tmpl-elementor-control-dynamic-cover'),
+		    renderedTemplate = Marionette.Renderer.render(templateFunction, {
+			hasSettings: this.hasSettings(),
+			isRemovable: !this.getOption('dynamicSettings').default,
+			title: config.title,
+			content: config.panel_template
+		});
+
+		return Marionette.TemplateCache.prototype.compileTemplate(renderedTemplate.trim());
+	},
+
+	getTagConfig: function getTagConfig() {
+		return elementor.dynamicTags.getConfig('tags.' + this.getOption('name'));
+	},
+
+	initSettingsPopup: function initSettingsPopup() {
+		var settingsPopupOptions = {
+			className: 'elementor-tag-settings-popup',
+			position: {
+				my: 'left top+5',
+				at: 'left bottom',
+				of: this.$el,
+				autoRefresh: true
+			}
+		};
+
+		var settingsPopup = elementorCommon.dialogsManager.createWidget('buttons', settingsPopupOptions);
+
+		this.getSettingsPopup = function () {
+			return settingsPopup;
+		};
+	},
+
+	hasSettings: function hasSettings() {
+		return !!Object.values(this.getTagConfig().controls).length;
+	},
+
+	showSettingsPopup: function showSettingsPopup() {
+		if (!this.tagControlsStack) {
+			this.initTagControlsStack();
+		}
+
+		var settingsPopup = this.getSettingsPopup();
+
+		if (settingsPopup.isVisible()) {
+			return;
+		}
+
+		settingsPopup.show();
+	},
+
+	initTagControlsStack: function initTagControlsStack() {
+		this.tagControlsStack = new TagControlsStack({
+			model: this.model,
+			controls: this.model.controls,
+			name: this.options.name,
+			controlName: this.options.controlName,
+			el: this.getSettingsPopup().getElements('message')[0]
+		});
+
+		this.tagControlsStack.render();
+	},
+
+	initModel: function initModel() {
+		this.model = new elementorModules.editor.elements.models.BaseSettings(this.getOption('settings'), {
+			controls: this.getTagConfig().controls
+		});
+	},
+
+	initialize: function initialize() {
+		if (!this.hasSettings()) {
+			return;
+		}
+
+		this.initModel();
+
+		this.initSettingsPopup();
+
+		this.listenTo(this.model, 'change', this.render);
+	},
+
+	onClick: function onClick() {
+		this.showSettingsPopup();
+	},
+
+	onRemoveClick: function onRemoveClick(event) {
+		event.stopPropagation();
+
+		this.destroy();
+
+		this.trigger('remove');
+	},
+
+	onDestroy: function onDestroy() {
+		if (this.hasSettings()) {
+			this.getSettingsPopup().destroy();
+		}
+	}
+});
+
+/***/ }),
+/* 59 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var EmptyView = __webpack_require__(60);
+
+module.exports = elementorModules.editor.views.ControlsStack.extend({
+	activeTab: 'content',
+
+	template: _.noop,
+
+	emptyView: EmptyView,
+
+	isEmpty: function isEmpty() {
+		// Ignore the section control
+		return this.collection.length < 2;
+	},
+
+	getNamespaceArray: function getNamespaceArray() {
+		var currentPageView = elementor.getPanelView().getCurrentPageView(),
+		    eventNamespace = currentPageView.getNamespaceArray();
+
+		eventNamespace.push(currentPageView.activeSection);
+
+		eventNamespace.push(this.getOption('controlName'));
+
+		eventNamespace.push(this.getOption('name'));
+
+		return eventNamespace;
+	},
+
+	onRenderTemplate: function onRenderTemplate() {
+		this.activateFirstSection();
+	}
+});
+
+/***/ }),
+/* 60 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = Marionette.ItemView.extend({
+	className: 'elementor-tag-controls-stack-empty',
+
+	template: '#tmpl-elementor-tag-controls-stack-empty'
+});
+
+/***/ }),
+/* 61 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var helpers;
@@ -7921,7 +8435,7 @@ helpers = {
 module.exports = helpers;
 
 /***/ }),
-/* 57 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8085,7 +8599,7 @@ ImagesManager = function ImagesManager() {
 module.exports = new ImagesManager();
 
 /***/ }),
-/* 58 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8227,7 +8741,7 @@ var Debug = function Debug() {
 module.exports = new Debug();
 
 /***/ }),
-/* 59 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8235,7 +8749,7 @@ module.exports = new Debug();
 
 var Schemes,
     Stylesheet = __webpack_require__(22),
-    ControlsCSSParser = __webpack_require__(9);
+    ControlsCSSParser = __webpack_require__(10);
 
 Schemes = function Schemes() {
 	var self = this,
@@ -8369,7 +8883,7 @@ Schemes = function Schemes() {
 module.exports = new Schemes();
 
 /***/ }),
-/* 60 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8492,7 +9006,7 @@ presetsFactory = {
 module.exports = presetsFactory;
 
 /***/ }),
-/* 61 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8500,8 +9014,8 @@ module.exports = presetsFactory;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var TemplateLibraryLayoutView = __webpack_require__(62),
-    TemplateLibraryCollection = __webpack_require__(74),
+var TemplateLibraryLayoutView = __webpack_require__(67),
+    TemplateLibraryCollection = __webpack_require__(79),
     TemplateLibraryManager;
 
 TemplateLibraryManager = function TemplateLibraryManager() {
@@ -8933,20 +9447,20 @@ TemplateLibraryManager = function TemplateLibraryManager() {
 module.exports = new TemplateLibraryManager();
 
 /***/ }),
-/* 62 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var TemplateLibraryHeaderActionsView = __webpack_require__(63),
-    TemplateLibraryHeaderMenuView = __webpack_require__(64),
-    TemplateLibraryHeaderPreviewView = __webpack_require__(65),
-    TemplateLibraryHeaderBackView = __webpack_require__(66),
-    TemplateLibraryCollectionView = __webpack_require__(67),
-    TemplateLibrarySaveTemplateView = __webpack_require__(71),
-    TemplateLibraryImportView = __webpack_require__(72),
-    TemplateLibraryPreviewView = __webpack_require__(73);
+var TemplateLibraryHeaderActionsView = __webpack_require__(68),
+    TemplateLibraryHeaderMenuView = __webpack_require__(69),
+    TemplateLibraryHeaderPreviewView = __webpack_require__(70),
+    TemplateLibraryHeaderBackView = __webpack_require__(71),
+    TemplateLibraryCollectionView = __webpack_require__(72),
+    TemplateLibrarySaveTemplateView = __webpack_require__(76),
+    TemplateLibraryImportView = __webpack_require__(77),
+    TemplateLibraryPreviewView = __webpack_require__(78);
 
 module.exports = elementorModules.common.views.modal.Layout.extend({
 
@@ -9022,7 +9536,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend({
 });
 
 /***/ }),
-/* 63 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9071,7 +9585,7 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 64 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9140,7 +9654,7 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 65 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9161,7 +9675,7 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 66 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9182,14 +9696,14 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 67 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var TemplateLibraryTemplateLocalView = __webpack_require__(68),
-    TemplateLibraryTemplateRemoteView = __webpack_require__(69),
+var TemplateLibraryTemplateLocalView = __webpack_require__(73),
+    TemplateLibraryTemplateRemoteView = __webpack_require__(74),
     TemplateLibraryCollectionView;
 
 TemplateLibraryCollectionView = Marionette.CompositeView.extend({
@@ -9202,7 +9716,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend({
 	reorderOnSort: true,
 
 	emptyView: function emptyView() {
-		var EmptyView = __webpack_require__(70);
+		var EmptyView = __webpack_require__(75);
 
 		return new EmptyView();
 	},
@@ -9411,7 +9925,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend({
 module.exports = TemplateLibraryCollectionView;
 
 /***/ }),
-/* 68 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9464,7 +9978,7 @@ TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend({
 module.exports = TemplateLibraryTemplateLocalView;
 
 /***/ }),
-/* 69 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9508,7 +10022,7 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend({
 module.exports = TemplateLibraryTemplateRemoteView;
 
 /***/ }),
-/* 70 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9565,7 +10079,7 @@ TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend({
 module.exports = TemplateLibraryTemplatesEmptyView;
 
 /***/ }),
-/* 71 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9612,7 +10126,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend({
 
 		var formData = this.ui.form.elementorSerializeObject(),
 		    saveType = this.getSaveType(),
-		    JSONParams = { removeDefault: true };
+		    JSONParams = { remove: ['default'] };
 
 		formData.content = this.model ? [this.model.toJSON(JSONParams)] : elementor.elements.toJSON(JSONParams);
 
@@ -9625,7 +10139,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend({
 module.exports = TemplateLibrarySaveTemplateView;
 
 /***/ }),
-/* 72 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9741,7 +10255,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend({
 module.exports = TemplateLibraryImportView;
 
 /***/ }),
-/* 73 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9766,13 +10280,13 @@ TemplateLibraryPreviewView = Marionette.ItemView.extend({
 module.exports = TemplateLibraryPreviewView;
 
 /***/ }),
-/* 74 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var TemplateLibraryTemplateModel = __webpack_require__(75),
+var TemplateLibraryTemplateModel = __webpack_require__(80),
     TemplateLibraryCollection;
 
 TemplateLibraryCollection = Backbone.Collection.extend({
@@ -9782,7 +10296,7 @@ TemplateLibraryCollection = Backbone.Collection.extend({
 module.exports = TemplateLibraryCollection;
 
 /***/ }),
-/* 75 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9804,7 +10318,7 @@ module.exports = Backbone.Model.extend({
 });
 
 /***/ }),
-/* 76 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9887,13 +10401,13 @@ Conditions = function Conditions() {
 module.exports = new Conditions();
 
 /***/ }),
-/* 77 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var HistoryPageView = __webpack_require__(78),
+var HistoryPageView = __webpack_require__(83),
     Manager;
 
 Manager = function Manager() {
@@ -9909,9 +10423,9 @@ Manager = function Manager() {
 	var init = function init() {
 		elementor.on('preview:loaded', addPanelPage);
 
-		self.history = __webpack_require__(85);
+		self.history = __webpack_require__(90);
 
-		self.revisions = __webpack_require__(94);
+		self.revisions = __webpack_require__(99);
 
 		self.revisions.init();
 	};
@@ -9922,21 +10436,21 @@ Manager = function Manager() {
 module.exports = new Manager();
 
 /***/ }),
-/* 78 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _loading = __webpack_require__(79);
+var _loading = __webpack_require__(84);
 
 var _loading2 = _interopRequireDefault(_loading);
 
-var _panelTab = __webpack_require__(80);
+var _panelTab = __webpack_require__(85);
 
 var _panelTab2 = _interopRequireDefault(_panelTab);
 
-var _empty = __webpack_require__(82);
+var _empty = __webpack_require__(87);
 
 var _empty2 = _interopRequireDefault(_empty);
 
@@ -10035,7 +10549,7 @@ module.exports = Marionette.LayoutView.extend({
 });
 
 /***/ }),
-/* 79 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10089,7 +10603,7 @@ var _class = function (_Marionette$ItemView) {
 exports.default = _class;
 
 /***/ }),
-/* 80 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10100,7 +10614,7 @@ module.exports = Marionette.CompositeView.extend({
 
 	template: '#tmpl-elementor-panel-revisions',
 
-	childView: __webpack_require__(81),
+	childView: __webpack_require__(86),
 
 	childViewContainer: '#elementor-revisions-list',
 
@@ -10324,7 +10838,7 @@ module.exports = Marionette.CompositeView.extend({
 });
 
 /***/ }),
-/* 81 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10347,7 +10861,7 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 82 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10360,7 +10874,7 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 83 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10412,7 +10926,7 @@ var _class = function (_Marionette$ItemView) {
 exports.default = _class;
 
 /***/ }),
-/* 84 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10462,13 +10976,13 @@ var _class = function (_Marionette$ItemView) {
 exports.default = _class;
 
 /***/ }),
-/* 85 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _itemModel = __webpack_require__(86);
+var _itemModel = __webpack_require__(91);
 
 var _itemModel2 = _interopRequireDefault(_itemModel);
 
@@ -10478,8 +10992,8 @@ var _panelTab2 = _interopRequireDefault(_panelTab);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var ElementHistoryBehavior = __webpack_require__(87),
-    CollectionHistoryBehavior = __webpack_require__(88);
+var ElementHistoryBehavior = __webpack_require__(92),
+    CollectionHistoryBehavior = __webpack_require__(93);
 
 var Manager = function Manager() {
 	var self = this,
@@ -10875,7 +11389,7 @@ var Manager = function Manager() {
 module.exports = new Manager();
 
 /***/ }),
-/* 86 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10899,7 +11413,7 @@ module.exports = Backbone.Model.extend({
 });
 
 /***/ }),
-/* 87 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11051,7 +11565,7 @@ module.exports = Marionette.Behavior.extend({
 });
 
 /***/ }),
-/* 88 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11215,7 +11729,7 @@ module.exports = Marionette.Behavior.extend({
 });
 
 /***/ }),
-/* 89 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11389,7 +11903,7 @@ module.exports = elementorModules.Module.extend({
 });
 
 /***/ }),
-/* 90 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11479,14 +11993,14 @@ var AddSectionView = function (_BaseAddSectionView) {
 exports.default = AddSectionView;
 
 /***/ }),
-/* 91 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var BaseElementView = __webpack_require__(7),
-    ColumnEmptyView = __webpack_require__(92),
+    ColumnEmptyView = __webpack_require__(97),
     ColumnView;
 
 ColumnView = BaseElementView.extend({
@@ -11507,7 +12021,7 @@ ColumnView = BaseElementView.extend({
 				elChildType: 'widget'
 			},
 			Resizable: {
-				behaviorClass: __webpack_require__(93)
+				behaviorClass: __webpack_require__(98)
 			}
 		});
 
@@ -11711,7 +12225,7 @@ ColumnView = BaseElementView.extend({
 module.exports = ColumnView;
 
 /***/ }),
-/* 92 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11779,7 +12293,7 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 93 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11875,13 +12389,13 @@ ResizableBehavior = Marionette.Behavior.extend({
 module.exports = ResizableBehavior;
 
 /***/ }),
-/* 94 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var RevisionsCollection = __webpack_require__(95),
+var RevisionsCollection = __webpack_require__(100),
     RevisionsManager;
 
 RevisionsManager = function RevisionsManager() {
@@ -12035,13 +12549,13 @@ RevisionsManager = function RevisionsManager() {
 module.exports = new RevisionsManager();
 
 /***/ }),
-/* 95 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var RevisionModel = __webpack_require__(96);
+var RevisionModel = __webpack_require__(101);
 
 module.exports = Backbone.Collection.extend({
 	model: RevisionModel,
@@ -12051,7 +12565,7 @@ module.exports = Backbone.Collection.extend({
 });
 
 /***/ }),
-/* 96 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12068,7 +12582,7 @@ RevisionModel.prototype.sync = function () {
 module.exports = RevisionModel;
 
 /***/ }),
-/* 97 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12255,460 +12769,13 @@ module.exports = Marionette.Behavior.extend({
 });
 
 /***/ }),
-/* 98 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var TagPanelView = __webpack_require__(99);
-
-module.exports = Marionette.Behavior.extend({
-
-	tagView: null,
-
-	listenerAttached: false,
-
-	ui: {
-		tagArea: '.elementor-control-tag-area',
-		dynamicSwitcher: '.elementor-control-dynamic-switcher'
-	},
-
-	events: {
-		'click @ui.dynamicSwitcher': 'onDynamicSwitcherClick'
-	},
-
-	initialize: function initialize() {
-		if (!this.listenerAttached) {
-			this.listenTo(this.view.options.elementSettingsModel, 'change:external:__dynamic__', this.onAfterExternalChange);
-			this.listenerAttached = true;
-		}
-	},
-
-	renderTools: function renderTools() {
-		if (this.getOption('dynamicSettings').default) {
-			return;
-		}
-
-		var $dynamicSwitcher = jQuery(Marionette.Renderer.render('#tmpl-elementor-control-dynamic-switcher'));
-
-		if (this.view.model.get('label_block')) {
-			this.ui.controlTitle.after($dynamicSwitcher);
-
-			var $responsiveSwitchers = $dynamicSwitcher.next('.elementor-control-responsive-switchers');
-
-			if ($responsiveSwitchers.length) {
-				$responsiveSwitchers.after($dynamicSwitcher);
-			}
-		} else {
-			this.ui.controlTitle.before($dynamicSwitcher);
-		}
-
-		this.ui.dynamicSwitcher = this.$el.find(this.ui.dynamicSwitcher.selector);
-	},
-
-	toggleDynamicClass: function toggleDynamicClass() {
-		this.$el.toggleClass('elementor-control-dynamic-value', this.isDynamicMode());
-	},
-
-	isDynamicMode: function isDynamicMode() {
-		var dynamicSettings = this.view.elementSettingsModel.get('__dynamic__');
-
-		return !!(dynamicSettings && dynamicSettings[this.view.model.get('name')]);
-	},
-
-	createTagsList: function createTagsList() {
-		var tags = _.groupBy(this.getOption('tags'), 'group'),
-		    groups = elementor.dynamicTags.getConfig('groups'),
-		    $tagsList = this.ui.tagsList = jQuery('<div>', { class: 'elementor-tags-list' }),
-		    $tagsListInner = jQuery('<div>', { class: 'elementor-tags-list__inner' });
-
-		$tagsList.append($tagsListInner);
-
-		jQuery.each(groups, function (groupName) {
-			var groupTags = tags[groupName];
-
-			if (!groupTags) {
-				return;
-			}
-
-			var group = this,
-			    $groupTitle = jQuery('<div>', { class: 'elementor-tags-list__group-title' }).text(group.title);
-
-			$tagsListInner.append($groupTitle);
-
-			groupTags.forEach(function (tag) {
-				var $tag = jQuery('<div>', { class: 'elementor-tags-list__item' });
-
-				$tag.text(tag.title).attr('data-tag-name', tag.name);
-
-				$tagsListInner.append($tag);
-			});
-		});
-
-		$tagsListInner.on('click', '.elementor-tags-list__item', this.onTagsListItemClick.bind(this));
-
-		elementorCommon.elements.$body.append($tagsList);
-	},
-
-	getTagsList: function getTagsList() {
-		if (!this.ui.tagsList) {
-			this.createTagsList();
-		}
-
-		return this.ui.tagsList;
-	},
-
-	toggleTagsList: function toggleTagsList() {
-		var $tagsList = this.getTagsList();
-
-		if ($tagsList.is(':visible')) {
-			$tagsList.hide();
-
-			return;
-		}
-
-		$tagsList.show().position({
-			my: 'right top',
-			at: 'right bottom+5',
-			of: this.ui.dynamicSwitcher
-		});
-	},
-
-	setTagView: function setTagView(id, name, settings) {
-		if (this.tagView) {
-			this.tagView.destroy();
-		}
-
-		var tagView = this.tagView = new TagPanelView({
-			id: id,
-			name: name,
-			settings: settings,
-			controlName: this.view.model.get('name'),
-			dynamicSettings: this.getOption('dynamicSettings')
-		});
-
-		tagView.render();
-
-		this.ui.tagArea.after(tagView.el);
-
-		this.listenTo(tagView.model, 'change', this.onTagViewModelChange.bind(this)).listenTo(tagView, 'remove', this.onTagViewRemove.bind(this));
-	},
-
-	setDefaultTagView: function setDefaultTagView() {
-		var tagData = elementor.dynamicTags.tagTextToTagData(this.getDynamicValue());
-
-		this.setTagView(tagData.id, tagData.name, tagData.settings);
-	},
-
-	tagViewToTagText: function tagViewToTagText() {
-		var tagView = this.tagView;
-
-		return elementor.dynamicTags.tagDataToTagText(tagView.getOption('id'), tagView.getOption('name'), tagView.model);
-	},
-
-	getDynamicValue: function getDynamicValue() {
-		return this.view.elementSettingsModel.get('__dynamic__')[this.view.model.get('name')];
-	},
-
-	getDynamicControlSettings: function getDynamicControlSettings() {
-		return {
-			control: {
-				name: '__dynamic__',
-				label: this.view.model.get('label')
-			}
-		};
-	},
-
-	setDynamicValue: function setDynamicValue(value) {
-		var settingKey = this.view.model.get('name'),
-		    dynamicSettings = this.view.elementSettingsModel.get('__dynamic__') || {};
-
-		dynamicSettings = elementorCommon.helpers.cloneObject(dynamicSettings);
-
-		dynamicSettings[settingKey] = value;
-
-		this.view.elementSettingsModel.set('__dynamic__', dynamicSettings, this.getDynamicControlSettings(settingKey));
-
-		this.toggleDynamicClass();
-	},
-
-	destroyTagView: function destroyTagView() {
-		if (this.tagView) {
-			this.tagView.destroy();
-
-			this.tagView = null;
-		}
-	},
-
-	onRender: function onRender() {
-		this.$el.addClass('elementor-control-dynamic');
-
-		this.renderTools();
-
-		this.toggleDynamicClass();
-
-		if (this.isDynamicMode()) {
-			this.setDefaultTagView();
-		}
-	},
-
-	onDynamicSwitcherClick: function onDynamicSwitcherClick() {
-		this.toggleTagsList();
-	},
-
-	onTagsListItemClick: function onTagsListItemClick(event) {
-		var $tag = jQuery(event.currentTarget);
-
-		this.setTagView(elementor.helpers.getUniqueID(), $tag.data('tagName'), {});
-
-		this.setDynamicValue(this.tagViewToTagText());
-
-		this.toggleTagsList();
-
-		if (this.tagView.getTagConfig().settings_required) {
-			this.tagView.showSettingsPopup();
-		}
-	},
-
-	onTagViewModelChange: function onTagViewModelChange() {
-		this.setDynamicValue(this.tagViewToTagText());
-	},
-
-	onTagViewRemove: function onTagViewRemove() {
-		var settingKey = this.view.model.get('name'),
-		    dynamicSettings = this.view.elementSettingsModel.get('__dynamic__');
-
-		dynamicSettings = elementorCommon.helpers.cloneObject(dynamicSettings);
-
-		delete dynamicSettings[settingKey];
-
-		if (Object.keys(dynamicSettings).length) {
-			this.view.elementSettingsModel.set('__dynamic__', dynamicSettings, this.getDynamicControlSettings(settingKey));
-		} else {
-			this.view.elementSettingsModel.unset('__dynamic__', this.getDynamicControlSettings(settingKey));
-		}
-
-		this.toggleDynamicClass();
-	},
-
-	onAfterExternalChange: function onAfterExternalChange() {
-		this.destroyTagView();
-
-		if (this.isDynamicMode()) {
-			this.setDefaultTagView();
-		}
-
-		this.toggleDynamicClass();
-	},
-
-	onDestroy: function onDestroy() {
-		this.destroyTagView();
-	}
-});
-
-/***/ }),
-/* 99 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var TagControlsStack = __webpack_require__(100);
-
-module.exports = Marionette.ItemView.extend({
-
-	className: 'elementor-dynamic-cover elementor-input-style',
-
-	tagControlsStack: null,
-
-	templateHelpers: function templateHelpers() {
-		var helpers = {};
-		if (this.model) {
-			helpers.controls = this.model.options.controls;
-		}
-
-		return helpers;
-	},
-
-	ui: {
-		remove: '.elementor-dynamic-cover__remove'
-	},
-
-	events: function events() {
-		var events = {
-			'click @ui.remove': 'onRemoveClick'
-		};
-
-		if (this.hasSettings()) {
-			events.click = 'onClick';
-		}
-
-		return events;
-	},
-
-	getTemplate: function getTemplate() {
-		var config = this.getTagConfig(),
-		    templateFunction = Marionette.TemplateCache.get('#tmpl-elementor-control-dynamic-cover'),
-		    renderedTemplate = Marionette.Renderer.render(templateFunction, {
-			hasSettings: this.hasSettings(),
-			isRemovable: !this.getOption('dynamicSettings').default,
-			title: config.title,
-			content: config.panel_template
-		});
-
-		return Marionette.TemplateCache.prototype.compileTemplate(renderedTemplate.trim());
-	},
-
-	getTagConfig: function getTagConfig() {
-		return elementor.dynamicTags.getConfig('tags.' + this.getOption('name'));
-	},
-
-	initSettingsPopup: function initSettingsPopup() {
-		var settingsPopupOptions = {
-			className: 'elementor-tag-settings-popup',
-			position: {
-				my: 'left top+5',
-				at: 'left bottom',
-				of: this.$el,
-				autoRefresh: true
-			}
-		};
-
-		var settingsPopup = elementorCommon.dialogsManager.createWidget('buttons', settingsPopupOptions);
-
-		this.getSettingsPopup = function () {
-			return settingsPopup;
-		};
-	},
-
-	hasSettings: function hasSettings() {
-		return !!Object.values(this.getTagConfig().controls).length;
-	},
-
-	showSettingsPopup: function showSettingsPopup() {
-		if (!this.tagControlsStack) {
-			this.initTagControlsStack();
-		}
-
-		var settingsPopup = this.getSettingsPopup();
-
-		if (settingsPopup.isVisible()) {
-			return;
-		}
-
-		settingsPopup.show();
-	},
-
-	initTagControlsStack: function initTagControlsStack() {
-		this.tagControlsStack = new TagControlsStack({
-			model: this.model,
-			controls: this.model.controls,
-			name: this.options.name,
-			controlName: this.options.controlName,
-			el: this.getSettingsPopup().getElements('message')[0]
-		});
-
-		this.tagControlsStack.render();
-	},
-
-	initModel: function initModel() {
-		this.model = new elementorModules.editor.elements.models.BaseSettings(this.getOption('settings'), {
-			controls: this.getTagConfig().controls
-		});
-	},
-
-	initialize: function initialize() {
-		if (!this.hasSettings()) {
-			return;
-		}
-
-		this.initModel();
-
-		this.initSettingsPopup();
-
-		this.listenTo(this.model, 'change', this.render);
-	},
-
-	onClick: function onClick() {
-		this.showSettingsPopup();
-	},
-
-	onRemoveClick: function onRemoveClick(event) {
-		event.stopPropagation();
-
-		this.destroy();
-
-		this.trigger('remove');
-	},
-
-	onDestroy: function onDestroy() {
-		if (this.hasSettings()) {
-			this.getSettingsPopup().destroy();
-		}
-	}
-});
-
-/***/ }),
-/* 100 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var EmptyView = __webpack_require__(101);
-
-module.exports = elementorModules.editor.views.ControlsStack.extend({
-	activeTab: 'content',
-
-	template: _.noop,
-
-	emptyView: EmptyView,
-
-	isEmpty: function isEmpty() {
-		// Ignore the section control
-		return this.collection.length < 2;
-	},
-
-	getNamespaceArray: function getNamespaceArray() {
-		var currentPageView = elementor.getPanelView().getCurrentPageView(),
-		    eventNamespace = currentPageView.getNamespaceArray();
-
-		eventNamespace.push(currentPageView.activeSection);
-
-		eventNamespace.push(this.getOption('controlName'));
-
-		eventNamespace.push(this.getOption('name'));
-
-		return eventNamespace;
-	},
-
-	onRenderTemplate: function onRenderTemplate() {
-		this.activateFirstSection();
-	}
-});
-
-/***/ }),
-/* 101 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = Marionette.ItemView.extend({
-	className: 'elementor-tag-controls-stack-empty',
-
-	template: '#tmpl-elementor-tag-controls-stack-empty'
-});
-
-/***/ }),
-/* 102 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var ControlBaseView = __webpack_require__(4);
+var ControlBaseView = __webpack_require__(3);
 
 module.exports = ControlBaseView.extend({
 
@@ -12732,7 +12799,7 @@ module.exports = ControlBaseView.extend({
 });
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12840,7 +12907,7 @@ ControlCodeEditorItemView = ControlBaseDataView.extend({
 module.exports = ControlCodeEditorItemView;
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12886,44 +12953,6 @@ ControlColorItemView = ControlBaseDataView.extend({
 });
 
 module.exports = ControlColorItemView;
-
-/***/ }),
-/* 105 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var ControlBaseDataView = __webpack_require__(0),
-    ControlDateTimePickerItemView;
-
-ControlDateTimePickerItemView = ControlBaseDataView.extend({
-
-	onReady: function onReady() {
-		var self = this;
-
-		var options = _.extend({
-			onClose: function onClose() {
-				self.saveValue();
-			},
-			enableTime: true,
-			minuteIncrement: 1
-		}, this.model.get('picker_options'));
-
-		this.ui.input.flatpickr(options);
-	},
-
-	saveValue: function saveValue() {
-		this.setValue(this.ui.input.val());
-	},
-
-	onBeforeDestroy: function onBeforeDestroy() {
-		this.saveValue();
-		this.ui.input.flatpickr().destroy();
-	}
-});
-
-module.exports = ControlDateTimePickerItemView;
 
 /***/ }),
 /* 106 */
@@ -13101,7 +13130,7 @@ module.exports = ControlDimensionsItemView;
 "use strict";
 
 
-var ControlSelect2View = __webpack_require__(3);
+var ControlSelect2View = __webpack_require__(4);
 
 module.exports = ControlSelect2View.extend({
 	_enqueuedFonts: [],
@@ -13443,7 +13472,24 @@ module.exports = ControlMediaItemView;
 "use strict";
 
 
-var ControlSelect2View = __webpack_require__(3),
+var _baseData = __webpack_require__(0);
+
+var _baseData2 = _interopRequireDefault(_baseData);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+module.exports = _baseData2.default.extend({}, { onPasteStyle: function onPasteStyle() {
+    return false;
+  } });
+
+/***/ }),
+/* 110 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var ControlSelect2View = __webpack_require__(4),
     ControlIconView;
 
 ControlIconView = ControlSelect2View.extend({
@@ -13497,7 +13543,7 @@ ControlIconView = ControlSelect2View.extend({
 module.exports = ControlIconView;
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13546,7 +13592,7 @@ ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend({
 module.exports = ControlImageDimensionsItemView;
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13663,14 +13709,14 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend({
 module.exports = ControlMediaItemView;
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var ControlBaseDataView = __webpack_require__(0),
-    NumberValidator = __webpack_require__(113),
+    NumberValidator = __webpack_require__(114),
     ControlNumberItemView;
 
 ControlNumberItemView = ControlBaseDataView.extend({
@@ -13700,13 +13746,13 @@ ControlNumberItemView = ControlBaseDataView.extend({
 module.exports = ControlNumberItemView;
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Validator = __webpack_require__(10);
+var Validator = __webpack_require__(9);
 
 module.exports = Validator.extend({
 	validationMethod: function validationMethod(newValue) {
@@ -13728,7 +13774,7 @@ module.exports = Validator.extend({
 });
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13766,7 +13812,7 @@ ControlOrderItemView = ControlMultipleBaseItemView.extend({
 module.exports = ControlOrderItemView;
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13803,7 +13849,7 @@ ControlPopoverStarterView = ControlChooseView.extend({
 module.exports = ControlPopoverStarterView;
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14102,13 +14148,13 @@ ControlRepeaterItemView = ControlBaseDataView.extend({
 module.exports = ControlRepeaterItemView;
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ControlBaseView = __webpack_require__(4),
+var ControlBaseView = __webpack_require__(3),
     ControlSectionItemView;
 
 ControlSectionItemView = ControlBaseView.extend({
@@ -14128,7 +14174,7 @@ ControlSectionItemView = ControlBaseView.extend({
 module.exports = ControlSectionItemView;
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14153,7 +14199,7 @@ ControlSelectItemView = ControlBaseDataView.extend({}, {
 module.exports = ControlSelectItemView;
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14239,6 +14285,13 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend({
 		sliderInstance.on('slide', this.onSlideChange.bind(this));
 	},
 
+	applySavedValue: function applySavedValue() {
+		ControlBaseUnitsItemView.prototype.applySavedValue.apply(this, arguments);
+		if (this.ui.slider[0].noUiSlider) {
+			this.ui.slider[0].noUiSlider.set(this.getSize());
+		}
+	},
+
 	getSize: function getSize() {
 		return this.getControlValue(this.isMultiple() ? 'sizes' : 'size');
 	},
@@ -14302,7 +14355,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend({
 module.exports = ControlSliderItemView;
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14360,7 +14413,7 @@ ControlStructureItemView = ControlBaseDataView.extend({
 module.exports = ControlStructureItemView;
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14381,13 +14434,13 @@ module.exports = ControlBaseDataView.extend({
 });
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ControlBaseView = __webpack_require__(4),
+var ControlBaseView = __webpack_require__(3),
     ControlTabItemView;
 
 ControlTabItemView = ControlBaseView.extend({
@@ -14402,7 +14455,7 @@ ControlTabItemView = ControlBaseView.extend({
 module.exports = ControlTabItemView;
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14493,7 +14546,7 @@ module.exports = BaseMultiple.extend({
 });
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14560,7 +14613,7 @@ ControlWPWidgetItemView = ControlBaseDataView.extend({
 module.exports = ControlWPWidgetItemView;
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14748,7 +14801,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend({
 module.exports = ControlWysiwygItemView;
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14761,17 +14814,17 @@ module.exports = elementorModules.editor.elements.models.BaseSettings.extend({
 });
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _widgetDraggable = __webpack_require__(128);
+var _widgetDraggable = __webpack_require__(129);
 
 var _widgetDraggable2 = _interopRequireDefault(_widgetDraggable);
 
-var _widgetResizeable = __webpack_require__(129);
+var _widgetResizeable = __webpack_require__(130);
 
 var _widgetResizeable2 = _interopRequireDefault(_widgetResizeable);
 
@@ -14813,7 +14866,7 @@ WidgetView = BaseElementView.extend({
 
 		_.extend(behaviors, {
 			InlineEditing: {
-				behaviorClass: __webpack_require__(130),
+				behaviorClass: __webpack_require__(131),
 				inlineEditingClass: 'elementor-inline-editing'
 			},
 			Draggable: {
@@ -14978,7 +15031,7 @@ WidgetView = BaseElementView.extend({
 module.exports = WidgetView;
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15166,7 +15219,7 @@ var _class = function (_Marionette$Behavior) {
 exports.default = _class;
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15325,7 +15378,7 @@ var _class = function (_Marionette$Behavior) {
 exports.default = _class;
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15534,7 +15587,7 @@ InlineEditingBehavior = Marionette.Behavior.extend({
 module.exports = InlineEditingBehavior;
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15587,13 +15640,13 @@ PanelElementsElementsView = Marionette.CollectionView.extend({
 module.exports = PanelElementsElementsView;
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var PanelMenuGroupView = __webpack_require__(133),
+var PanelMenuGroupView = __webpack_require__(134),
     PanelMenuPageView;
 
 PanelMenuPageView = Marionette.CompositeView.extend({
@@ -15735,13 +15788,13 @@ PanelMenuPageView = Marionette.CompositeView.extend({
 module.exports = PanelMenuPageView;
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var PanelMenuItemView = __webpack_require__(134);
+var PanelMenuItemView = __webpack_require__(135);
 
 module.exports = Marionette.CompositeView.extend({
 	template: '#tmpl-elementor-panel-menu-group',
@@ -15779,7 +15832,7 @@ module.exports = Marionette.CompositeView.extend({
 });
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15801,7 +15854,7 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15812,7 +15865,7 @@ module.exports = elementorModules.Module.extend({
 	CACHE_KEY_NOT_FOUND_ERROR: 'Cache key not found',
 
 	tags: {
-		Base: __webpack_require__(136)
+		Base: __webpack_require__(137)
 	},
 
 	cache: {},
@@ -15943,7 +15996,7 @@ module.exports = elementorModules.Module.extend({
 	},
 
 	tagDataToTagText: function tagDataToTagText(tagID, tagName, tagSettings) {
-		tagSettings = encodeURIComponent(JSON.stringify(tagSettings && tagSettings.toJSON({ removeDefault: true }) || {}));
+		tagSettings = encodeURIComponent(JSON.stringify(tagSettings && tagSettings.toJSON({ remove: ['default'] }) || {}));
 
 		return '[elementor-tag id="' + tagID + '" name="' + tagName + '" settings="' + tagSettings + '"]';
 	},
@@ -15958,7 +16011,7 @@ module.exports = elementorModules.Module.extend({
 });
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16035,7 +16088,7 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16044,12 +16097,12 @@ module.exports = Marionette.ItemView.extend({
 module.exports = elementorModules.Module.extend({
 	modules: {
 		base: __webpack_require__(14),
-		general: __webpack_require__(138),
-		page: __webpack_require__(139)
+		general: __webpack_require__(139),
+		page: __webpack_require__(140)
 	},
 
 	panelPages: {
-		base: __webpack_require__(140)
+		base: __webpack_require__(141)
 	},
 
 	onInit: function onInit() {
@@ -16068,7 +16121,7 @@ module.exports = elementorModules.Module.extend({
 });
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16090,7 +16143,7 @@ module.exports = BaseSettings.extend({
 });
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16136,7 +16189,7 @@ module.exports = BaseSettings.extend({
 });
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16163,7 +16216,7 @@ module.exports = elementorModules.editor.views.ControlsStack.extend({
 });
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16327,8 +16380,8 @@ module.exports = elementorModules.Module.extend({
 		}, options);
 
 		var self = this,
-		    elements = elementor.elements.toJSON({ removeDefault: true }),
-		    settings = elementor.settings.page.model.toJSON({ removeDefault: true }),
+		    elements = elementor.elements.toJSON({ remove: ['default', 'editSettings', 'defaultEditSettings'] }),
+		    settings = elementor.settings.page.model.toJSON({ remove: ['default'] }),
 		    oldStatus = elementor.settings.page.model.get('post_status'),
 		    statusChanged = oldStatus !== options.status;
 
@@ -16413,7 +16466,7 @@ module.exports = elementorModules.Module.extend({
 });
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16505,7 +16558,7 @@ module.exports = elementorModules.Module.extend({
 });
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16531,7 +16584,7 @@ module.exports = BaseRegion.extend({
 	constructor: function constructor() {
 		BaseRegion.prototype.constructor.apply(this, arguments);
 
-		var PanelLayoutView = __webpack_require__(144);
+		var PanelLayoutView = __webpack_require__(145);
 
 		this.show(new PanelLayoutView());
 
@@ -16585,13 +16638,13 @@ module.exports = BaseRegion.extend({
 });
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var EditModeItemView = __webpack_require__(145),
+var EditModeItemView = __webpack_require__(146),
     PanelLayoutView;
 
 PanelLayoutView = Marionette.LayoutView.extend({
@@ -16630,11 +16683,11 @@ PanelLayoutView = Marionette.LayoutView.extend({
 	buildPages: function buildPages() {
 		var pages = {
 			elements: {
-				view: __webpack_require__(146),
+				view: __webpack_require__(147),
 				title: '<img src="' + elementorCommon.config.urls.assets + 'images/logo-panel.svg">'
 			},
 			editor: {
-				view: __webpack_require__(151)
+				view: __webpack_require__(152)
 			},
 			menu: {
 				view: elementor.modules.layouts.panel.pages.menu.Menu,
@@ -16644,10 +16697,10 @@ PanelLayoutView = Marionette.LayoutView.extend({
 				view: __webpack_require__(39)
 			},
 			typographyScheme: {
-				view: __webpack_require__(154)
+				view: __webpack_require__(155)
 			},
 			colorPickerScheme: {
-				view: __webpack_require__(155)
+				view: __webpack_require__(156)
 			}
 		};
 
@@ -16657,7 +16710,7 @@ PanelLayoutView = Marionette.LayoutView.extend({
 		_.each(disabledSchemes, function (schemeType) {
 			var scheme = elementor.schemes.getScheme(schemeType);
 
-			pages[schemeType + 'Scheme'].view = __webpack_require__(156).extend({
+			pages[schemeType + 'Scheme'].view = __webpack_require__(157).extend({
 				disabledTitle: scheme.disabled_title
 			});
 		});
@@ -16754,8 +16807,8 @@ PanelLayoutView = Marionette.LayoutView.extend({
 	},
 
 	onBeforeShow: function onBeforeShow() {
-		var PanelFooterItemView = __webpack_require__(157),
-		    PanelHeaderItemView = __webpack_require__(158);
+		var PanelFooterItemView = __webpack_require__(158),
+		    PanelHeaderItemView = __webpack_require__(159);
 
 		// Edit Mode
 		this.showChildView('modeSwitcher', new EditModeItemView());
@@ -16799,7 +16852,7 @@ PanelLayoutView = Marionette.LayoutView.extend({
 module.exports = PanelLayoutView;
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16858,17 +16911,17 @@ EditModeItemView = Marionette.ItemView.extend({
 module.exports = EditModeItemView;
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var PanelElementsCategoriesCollection = __webpack_require__(147),
+var PanelElementsCategoriesCollection = __webpack_require__(148),
     PanelElementsElementsCollection = __webpack_require__(38),
-    PanelElementsCategoriesView = __webpack_require__(148),
+    PanelElementsCategoriesView = __webpack_require__(149),
     PanelElementsElementsView = elementor.modules.layouts.panel.pages.elements.views.Elements,
-    PanelElementsSearchView = __webpack_require__(150),
+    PanelElementsSearchView = __webpack_require__(151),
     PanelElementsGlobalView = __webpack_require__(35),
     PanelElementsLayoutView;
 
@@ -17076,7 +17129,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend({
 module.exports = PanelElementsLayoutView;
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17092,13 +17145,13 @@ PanelElementsCategoriesCollection = Backbone.Collection.extend({
 module.exports = PanelElementsCategoriesCollection;
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var PanelElementsCategoryView = __webpack_require__(149),
+var PanelElementsCategoryView = __webpack_require__(150),
     PanelElementsCategoriesView;
 
 PanelElementsCategoriesView = Marionette.CompositeView.extend({
@@ -17124,7 +17177,7 @@ PanelElementsCategoriesView = Marionette.CompositeView.extend({
 module.exports = PanelElementsCategoriesView;
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17192,7 +17245,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend({
 module.exports = PanelElementsCategoryView;
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17231,7 +17284,7 @@ PanelElementsSearchView = Marionette.ItemView.extend({
 module.exports = PanelElementsSearchView;
 
 /***/ }),
-/* 151 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17347,7 +17400,7 @@ EditorView = ControlsStack.extend({
 module.exports = EditorView;
 
 /***/ }),
-/* 152 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17389,7 +17442,7 @@ PanelSchemeColorView = PanelSchemeItemView.extend({
 module.exports = PanelSchemeColorView;
 
 /***/ }),
-/* 153 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17471,7 +17524,7 @@ PanelSchemeTypographyView = PanelSchemeItemView.extend({
 module.exports = PanelSchemeTypographyView;
 
 /***/ }),
-/* 154 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17489,7 +17542,7 @@ PanelSchemeTypographyView = PanelSchemeBaseView.extend({
 module.exports = PanelSchemeTypographyView;
 
 /***/ }),
-/* 155 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17521,7 +17574,7 @@ PanelSchemeColorPickerView = PanelSchemeColorsView.extend({
 module.exports = PanelSchemeColorPickerView;
 
 /***/ }),
-/* 156 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17548,7 +17601,7 @@ PanelSchemeDisabledView = Marionette.ItemView.extend({
 module.exports = PanelSchemeDisabledView;
 
 /***/ }),
-/* 157 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17724,7 +17777,7 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 158 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17767,23 +17820,23 @@ PanelHeaderItemView = Marionette.ItemView.extend({
 module.exports = PanelHeaderItemView;
 
 /***/ }),
-/* 159 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _independent = __webpack_require__(160);
+var _independent = __webpack_require__(161);
 
 var _independent2 = _interopRequireDefault(_independent);
 
-var _rightClickIntroduction = __webpack_require__(161);
+var _rightClickIntroduction = __webpack_require__(162);
 
 var _rightClickIntroduction2 = _interopRequireDefault(_rightClickIntroduction);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var BaseSectionsContainerView = __webpack_require__(162),
+var BaseSectionsContainerView = __webpack_require__(163),
     Preview;
 
 Preview = BaseSectionsContainerView.extend({
@@ -17921,7 +17974,7 @@ Preview = BaseSectionsContainerView.extend({
 module.exports = Preview;
 
 /***/ }),
-/* 160 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17972,7 +18025,7 @@ var AddSectionView = function (_BaseAddSectionView) {
 exports.default = AddSectionView;
 
 /***/ }),
-/* 161 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18077,7 +18130,7 @@ var _class = function (_Marionette$Behavior) {
 exports.default = _class;
 
 /***/ }),
-/* 162 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

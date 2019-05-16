@@ -1,4 +1,4 @@
-/*! elementor - v2.5.7 - 14-03-2019 */
+/*! elementor - v2.5.15 - 07-05-2019 */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -82,7 +82,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 181);
+/******/ 	return __webpack_require__(__webpack_require__.s = 182);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -823,7 +823,7 @@ module.exports = elementorModules.frontend.handlers.Base.extend({
 
 /***/ }),
 
-/***/ 181:
+/***/ 182:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -831,7 +831,7 @@ module.exports = elementorModules.frontend.handlers.Base.extend({
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _documentsManager = __webpack_require__(182);
+var _documentsManager = __webpack_require__(183);
 
 var _documentsManager2 = _interopRequireDefault(_documentsManager);
 
@@ -857,10 +857,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 
 var EventManager = __webpack_require__(13),
-    ElementsHandler = __webpack_require__(183),
-    YouTubeModule = __webpack_require__(195),
-    AnchorsModule = __webpack_require__(196),
-    LightboxModule = __webpack_require__(197);
+    ElementsHandler = __webpack_require__(184),
+    YouTubeModule = __webpack_require__(196),
+    AnchorsModule = __webpack_require__(197),
+    LightboxModule = __webpack_require__(198);
 
 var Frontend = function (_elementorModules$Vie) {
 	_inherits(Frontend, _elementorModules$Vie);
@@ -1203,7 +1203,7 @@ if (!elementorFrontend.isEditMode()) {
 
 /***/ }),
 
-/***/ 182:
+/***/ 183:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1312,7 +1312,7 @@ exports.default = _class;
 
 /***/ }),
 
-/***/ 183:
+/***/ 184:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1324,24 +1324,24 @@ module.exports = function ($) {
 	// element-type.skin-type
 	var handlers = {
 		// Elements
-		section: __webpack_require__(184),
+		section: __webpack_require__(185),
 
 		// Widgets
-		'accordion.default': __webpack_require__(185),
-		'alert.default': __webpack_require__(186),
-		'counter.default': __webpack_require__(187),
-		'progress.default': __webpack_require__(188),
-		'tabs.default': __webpack_require__(189),
-		'toggle.default': __webpack_require__(190),
-		'video.default': __webpack_require__(191),
-		'image-carousel.default': __webpack_require__(192),
-		'text-editor.default': __webpack_require__(193)
+		'accordion.default': __webpack_require__(186),
+		'alert.default': __webpack_require__(187),
+		'counter.default': __webpack_require__(188),
+		'progress.default': __webpack_require__(189),
+		'tabs.default': __webpack_require__(190),
+		'toggle.default': __webpack_require__(191),
+		'video.default': __webpack_require__(192),
+		'image-carousel.default': __webpack_require__(193),
+		'text-editor.default': __webpack_require__(194)
 	};
 
 	var handlersInstances = {};
 
 	var addGlobalHandlers = function addGlobalHandlers() {
-		elementorFrontend.hooks.addAction('frontend/element_ready/global', __webpack_require__(194));
+		elementorFrontend.hooks.addAction('frontend/element_ready/global', __webpack_require__(195));
 	};
 
 	var addElementsHandlers = function addElementsHandlers() {
@@ -1418,7 +1418,7 @@ module.exports = function ($) {
 
 /***/ }),
 
-/***/ 184:
+/***/ 185:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1540,8 +1540,6 @@ var BackgroundVideo = elementorModules.frontend.handlers.Base.extend({
 				rel: 0
 			}
 		});
-
-		elementorFrontend.elements.$window.on('resize', self.changeVideoSize);
 	},
 
 	activate: function activate() {
@@ -1560,6 +1558,8 @@ var BackgroundVideo = elementorModules.frontend.handlers.Base.extend({
 		} else {
 			self.elements.$backgroundVideoHosted.attr('src', videoLink).one('canplay', self.changeVideoSize);
 		}
+
+		elementorFrontend.elements.$window.on('resize', self.changeVideoSize);
 	},
 
 	deactivate: function deactivate() {
@@ -1568,6 +1568,8 @@ var BackgroundVideo = elementorModules.frontend.handlers.Base.extend({
 		} else {
 			this.elements.$backgroundVideoHosted.removeAttr('src');
 		}
+
+		elementorFrontend.elements.$window.off('resize', this.changeVideoSize);
 	},
 
 	run: function run() {
@@ -1696,9 +1698,10 @@ var Shapes = elementorModules.frontend.handlers.Base.extend({
 		    shapeType = self.getElementSettings(baseSettingKey),
 		    $svgContainer = this.elements['$' + side + 'Container'];
 
-		$svgContainer.empty().attr('data-shape', shapeType);
+		$svgContainer.attr('data-shape', shapeType);
 
 		if (!shapeType) {
+			$svgContainer.empty(); // Shape-divider set to 'none'
 			return;
 		}
 
@@ -1711,7 +1714,7 @@ var Shapes = elementorModules.frontend.handlers.Base.extend({
 		var svgURL = self.getSvgURL(shapeType, fileName);
 
 		jQuery.get(svgURL, function (data) {
-			$svgContainer.append(data.childNodes[0]);
+			$svgContainer.empty().append(data.childNodes[0]);
 		});
 
 		this.setNegative(side);
@@ -1754,8 +1757,12 @@ var Shapes = elementorModules.frontend.handlers.Base.extend({
 
 var HandlesPosition = elementorModules.frontend.handlers.Base.extend({
 
-	isFirst: function isFirst() {
+	isFirstSection: function isFirstSection() {
 		return this.$element.is('.elementor-edit-mode .elementor-top-section:first');
+	},
+
+	isOverflowHidden: function isOverflowHidden() {
+		return 'hidden' === this.$element.css('overflow');
 	},
 
 	getOffset: function getOffset() {
@@ -1768,18 +1775,18 @@ var HandlesPosition = elementorModules.frontend.handlers.Base.extend({
 	},
 
 	setHandlesPosition: function setHandlesPosition() {
-		var self = this;
+		var isOverflowHidden = this.isOverflowHidden();
 
-		if (!self.isFirst()) {
+		if (!isOverflowHidden && !this.isFirstSection()) {
 			return;
 		}
 
-		var offset = self.getOffset(),
-		    $handlesElement = self.$element.find('> .elementor-element-overlay > .elementor-editor-section-settings'),
+		var offset = isOverflowHidden ? 0 : this.getOffset(),
+		    $handlesElement = this.$element.find('> .elementor-element-overlay > .elementor-editor-section-settings'),
 		    insideHandleClass = 'elementor-section--handles-inside';
 
 		if (offset < 25) {
-			self.$element.addClass(insideHandleClass);
+			this.$element.addClass(insideHandleClass);
 
 			if (offset < -5) {
 				$handlesElement.css('top', -offset);
@@ -1787,12 +1794,13 @@ var HandlesPosition = elementorModules.frontend.handlers.Base.extend({
 				$handlesElement.css('top', '');
 			}
 		} else {
-			self.$element.removeClass(insideHandleClass);
+			this.$element.removeClass(insideHandleClass);
 		}
 	},
 
 	onInit: function onInit() {
 		this.setHandlesPosition();
+
 		this.$element.on('mouseenter', this.setHandlesPosition);
 	}
 });
@@ -1812,7 +1820,7 @@ module.exports = function ($scope) {
 
 /***/ }),
 
-/***/ 185:
+/***/ 186:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1830,7 +1838,7 @@ module.exports = function ($scope) {
 
 /***/ }),
 
-/***/ 186:
+/***/ 187:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1844,7 +1852,7 @@ module.exports = function ($scope, $) {
 
 /***/ }),
 
-/***/ 187:
+/***/ 188:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1867,7 +1875,7 @@ module.exports = function ($scope, $) {
 
 /***/ }),
 
-/***/ 188:
+/***/ 189:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1883,7 +1891,7 @@ module.exports = function ($scope, $) {
 
 /***/ }),
 
-/***/ 189:
+/***/ 190:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1900,7 +1908,7 @@ module.exports = function ($scope) {
 
 /***/ }),
 
-/***/ 190:
+/***/ 191:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1920,7 +1928,7 @@ module.exports = function ($scope) {
 
 /***/ }),
 
-/***/ 191:
+/***/ 192:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2017,7 +2025,7 @@ module.exports = function ($scope) {
 
 /***/ }),
 
-/***/ 192:
+/***/ 193:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2090,7 +2098,7 @@ module.exports = function ($scope) {
 
 /***/ }),
 
-/***/ 193:
+/***/ 194:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2193,7 +2201,7 @@ module.exports = function ($scope) {
 
 /***/ }),
 
-/***/ 194:
+/***/ 195:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2250,7 +2258,7 @@ module.exports = function ($scope) {
 
 /***/ }),
 
-/***/ 195:
+/***/ 196:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2305,7 +2313,7 @@ module.exports = elementorModules.ViewModule.extend({
 
 /***/ }),
 
-/***/ 196:
+/***/ 197:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2392,7 +2400,7 @@ module.exports = elementorModules.ViewModule.extend({
 
 /***/ }),
 
-/***/ 197:
+/***/ 198:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

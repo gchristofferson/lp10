@@ -23,6 +23,7 @@
       'ID'=> $post->ID,
       'title'=> $post->post_title,
       'type'=> isset($meta[META_PREFIX.'type'][0])? $meta[META_PREFIX.'type'][0]: 'pdf',
+      'ready_function'=> isset($meta[META_PREFIX.'ready_function'][0])? $meta[META_PREFIX.'ready_function'][0]: '',
       'data'=> unserialize(isset($meta[META_PREFIX.'data'][0])? $meta[META_PREFIX.'data'][0]: serialize($def['data'])),
       'thumbnail'=> unserialize(isset($meta[META_PREFIX.'thumbnail'][0])? $meta[META_PREFIX.'thumbnail'][0]: serialize($def['thumbnail'])),
       'props'=> unserialize(isset($meta[META_PREFIX.'props'][0])? $meta[META_PREFIX.'props'][0]: serialize($def['props'])),

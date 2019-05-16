@@ -5,7 +5,7 @@
     Description: Interactive 3D FlipBook Powered Physics Engine WordPress Plugin
     Author: iberezansky
     Author URI: http://iberezansky.net
-    Version: 1.9.11
+    Version: 1.9.17
     License: GPLv2 or later
 
     Text Domain: 3d-flip-book
